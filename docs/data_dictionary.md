@@ -38,6 +38,16 @@
 | identity_resolution | (Case-level only) Structured `IdentityResolutionResult` from cross-document identity resolution (added in stage P2; see below) |
 | validation | Structured `DocumentValidationReport` (per document) / `CaseValidationReport` (case-level) from the evidence validation subsystem (added in stage P3; see below) |
 | fraud_signals / fraud_assessment | `DocumentFraudSignals` (per document) / `FraudAssessment` (case-level) from the fraud-signal subsystem (added in stage P4; see below) |
+| risk_assessment | (Case-level only) `RiskAssessment` — the explicit basis for `decision`, added in stage P5; see below |
+
+**Stage P5 changed how `decision`/`reason_codes` are computed at the case level** (not
+just an additive field): `CaseResult.decision` is now `risk_assessment.policy_outcome`,
+not "the worst individual document decision." `DocumentResult.decision` (per document)
+is unchanged since P0 — it remains one input among several to the case-level policy.
+`CaseResult.reason_codes` is now the union of the legacy per-document reason codes
+(preserved for operational compatibility — e.g. `DOCUMENT_EXPIRED`, `SUSPECTED_TAMPERING`
+still appear when applicable) and `risk_assessment.reason_codes` (new, policy-level
+codes such as `HARD_STOP:document_decision`, `REVIEW:identity_conflict`).
 
 ## Document evidence (`evidence`, added in stage P1)
 
@@ -224,3 +234,68 @@ registry (`src/fraud_signals/registry.py`) currently contains exactly one entry 
 synthetic `ALTERED_TEXT_REGION_DETECTED` tamper fixture — reflecting only what is
 actually present in this training dataset ("where present"), not a fabricated
 capability.
+
+## Decision policy (`risk_assessment`, added in stage P5)
+
+`src/decision_policy/` is the explicit decisioning layer. It aggregates every prior
+stage's evidence (Document Intelligence, Identity Resolution, Evidence Validation,
+Fraud Signals) into an internal `EvidenceBundle`, derives a list of `RiskFactor`
+objects, and applies a deterministic, rule-based policy — **not** an opaque weighted
+score. `CaseResult.decision` **is** `risk_assessment.policy_outcome`.
+
+### `RiskFactor`
+| Field | Meaning |
+|---|---|
+| factor_id | Traceable identifier, e.g. `CASE-005:full_name:CONFLICT` |
+| category | `document_decision` / `identity_conflict` / `identity_uncertainty` / `fraud_signal` / `validation_failure` / `evidence_quality` |
+| severity | `INFO` / `LOW` / `MEDIUM` / `HIGH` / `CRITICAL` (same scale used throughout P3/P4) |
+| triggers_hard_stop | The only thing the policy engine reads to decide REJECT vs. REVIEW — set explicitly where each factor is derived, never inferred implicitly at decision time |
+| description, source, evidence_references | Human-readable explanation and traceability back to the originating evidence layer |
+
+### `RiskAssessment`
+| Field | Meaning |
+|---|---|
+| case_id | Case identifier |
+| policy_version | e.g. `1.0.0` — bump whenever the rules in `src/decision_policy/engine.py` change. Decisions are reproducible from retained evidence (every layer's output is already retained on `CaseResult`) plus this version. |
+| risk_factors | Every factor considered — the full, inspectable basis for the outcome |
+| evidence_strength | `[0,1]` descriptive heuristic, **not a calibrated probability**. Mean of two separately-computed components — extraction-layer field confidence, and identity-resolution match strength — so extraction confidence is never conflated with identity risk (requirement 3). Does not affect `policy_outcome`. |
+| uncertainty | `[0,1]` descriptive heuristic, **not a calibrated probability**. `min(1.0, 0.2 × count)` of missing/unknown/ambiguous evidence signals (unreadable documents, `UNKNOWN` validation results, `INSUFFICIENT_EVIDENCE` identity attributes). Does not affect `policy_outcome`. |
+| validation_failure_count, identity_conflict_count, fraud_signal_count | Convenience counts by risk-factor category |
+| hard_stop_triggered | `true` iff any risk factor has `triggers_hard_stop=true` |
+| policy_outcome | `APPROVE` / `REVIEW` / `REJECT` — authoritative; this becomes `CaseResult.decision` |
+| reason_codes | Per-factor codes, e.g. `HARD_STOP:document_decision`, `REVIEW:identity_conflict`, or `POLICY_APPROVED_NO_RISK_FACTORS` when there are no factors at all |
+| explanation | Analyst-facing narrative: factor counts by category, and (for REJECT) which specific hard-stop factors triggered it |
+
+### The policy rule, in full
+```
+hard_stop = any(factor.triggers_hard_stop for factor in risk_factors)
+if hard_stop:            return REJECT
+elif risk_factors:       return REVIEW
+else:                    return APPROVE
+```
+Hard-stop conditions (defined where each factor is derived, `src/decision_policy/factors.py`):
+- Any document independently REJECTed by `src/rules.py` (expiry, tamper marker, format) — unchanged since P0.
+- A CRITICAL-severity fraud signal (currently: the tamper-marker signal).
+- A **date_of_birth** identity conflict specifically — dates are exact-or-contradiction
+  (never fuzzy, see `src/identity_resolution/matching.py`), making this the least
+  ambiguous identity hard-stop available.
+- A CRITICAL-severity validation failure (reserved; no current rule reaches CRITICAL).
+
+Everything else that produces a risk factor (a document-level REVIEW, a fuzzy or
+insufficient-evidence identity attribute, a non-DOB identity conflict, a non-CRITICAL
+fraud signal, a validation FAIL below CRITICAL, an unreadable document, an UNKNOWN
+validation result) is review-level, not a hard stop — deliberately, since none of these
+alone is proof of a genuine problem (see requirement 7 in `identity_resolution`'s design:
+fuzzy similarity is never treated as proof of identity, and the same principle applies
+here to weaker signals generally).
+
+### Why a rule list instead of a weighted score
+A single numerical risk score that sums weighted contributions was deliberately not
+used for the decision itself: with heterogeneous evidence (a document rejection, an
+identity conflict, a fraud signal, a validation failure) any fixed weighting is an
+implicit policy choice that is hard to justify, hard to test exhaustively, and easy to
+game by a case with many small "safe" signals diluting one serious one. The explicit
+hard-stop/review split makes every decision traceable to specific, named factors
+(`tests/test_decision_policy.py` tests the rule list directly, not a threshold on a
+score). `evidence_strength`/`uncertainty` still provide the descriptive numeric summaries
+`RiskAssessment` asks for, but only as analyst context — never as the decision input.

@@ -15,90 +15,108 @@ Synthetic application + identity document image
        Regex / line parser                  Document Intelligence provider
                 |                            (src/document_intelligence/)
                 v                            classification + quality assessment
-       Validation rules                      + schema-validated DocumentEvidence
-     date / ID / tamper flag                             |
-     (src/rules.py, unchanged                +------------+------------+
-      decision policy)                       v                         v
-                |                 Evidence Validation engine   Identity Resolution
-                |                 (src/evidence_validation/)   (src/identity_resolution/)
-                |                 10 computable-truth rule     cross-document attribute
-                |                 categories, PASS/FAIL/        matching (P2, unchanged
-                |                 UNKNOWN/NOT_APPLICABLE/       in this stage)
-                |                 NOT_IMPLEMENTED per rule
-                |                            |                         |
-                |                            v                         v
-                |                 Fraud Signal engine (src/fraud_signals/)
-                |                 tamper marker (labeled fixture-source) +
-                |                 temporal impossibilities + identity conflicts
-                |                 (from Identity Resolution) + document duplication
-                |                 -> FraudSignal evidence, never a verdict
-                |                            |
-                |               attached additively to the API
-                |               response as `validation` / `fraud_assessment`
-                |               (neither yet consumed by decisioning)
-                v
-     APPROVE / REVIEW / REJECT
+     Per-document validation                 + schema-validated DocumentEvidence
+     rules (src/rules.py,                                |
+     unchanged since P0 --                  +-------------+-------------+
+     format/expiry/tamper,                  v                           v
+     still drives each              Evidence Validation engine   Identity Resolution
+     document's own decision)       (src/evidence_validation/)   (src/identity_resolution/)
+                |                   10 computable-truth rule     cross-document attribute
+                |                   categories, PASS/FAIL/       matching (full_name/DOB/
+                |                   UNKNOWN/NOT_APPLICABLE/      address vs submitted
+                |                   NOT_IMPLEMENTED per rule     application)
+                |                              |                           |
+                |                              v                           v
+                |                   Fraud Signal engine (src/fraud_signals/)
+                |                   tamper marker (labeled fixture-source) +
+                |                   temporal impossibilities + identity conflicts +
+                |                   document duplication -> FraudSignal evidence,
+                |                   never a verdict
+                |                              |
+                +------------------------------+------------------------------+
+                                                v
+                            Decision Policy engine (src/decision_policy/)
+                            EvidenceBundle -> explicit, inspectable RiskFactors
+                            (hard-stop vs. review, never an opaque weighted score)
+                            -> RiskAssessment (policy_outcome, reason_codes,
+                               explanation, policy_version)
+                                                |
+                                                v
+                     CaseResult.decision = risk_assessment.policy_outcome
+                            APPROVE / REVIEW / REJECT
+                     (per-document `decision` on DocumentResult is unchanged --
+                      it is one of several inputs the case-level policy considers,
+                      not the case decision itself)
 ```
 
 The image is retained as supporting evidence, but Repo 1.0 does not perform layout-aware
 vision inference. The deterministic OCR sidecar simulates the text stream that a legacy
-OCR engine would have produced. As of stage P1, that sidecar text is additionally routed
-through a typed Document Intelligence provider interface
-(`src/document_intelligence/`) that produces schema-validated, provenance-carrying
-`DocumentEvidence`/`EvidenceField` records (see `docs/data_dictionary.md`). This is an
-additive evidence-generation capability only — the decision path (`src/rules.py`) is
-unchanged and does not consume it yet; a real OCR/VLM provider could later replace the
-deterministic provider behind the same interface without any change to decisioning.
+OCR engine would have produced. Since stage P1, that sidecar text is additionally routed
+through a typed Document Intelligence provider interface (`src/document_intelligence/`)
+that produces schema-validated, provenance-carrying `DocumentEvidence`/`EvidenceField`
+records (see `docs/data_dictionary.md`).
 
-## Current brownfield constraints
+**As of stage P5, case-level decisioning is fully rearchitected.** `CaseResult.decision`
+is no longer "the worst individual document decision" — it is the explicit output of
+`src/decision_policy/`, an inspectable, deterministic policy that aggregates evidence
+from every prior stage (Document Intelligence, Identity Resolution, Evidence Validation,
+Fraud Signals) into `RiskFactor` objects, then applies a simple, testable rule: any
+hard-stop factor → REJECT; any remaining factor → REVIEW; no factors → APPROVE. See
+`docs/data_dictionary.md` for the full contract and `docs/assessment/` for the original
+P0 finding this closes.
+
+## Current brownfield constraints (status as of P5)
+
 1. ~~Parsing logic is document-type specific and brittle.~~ The legacy regex/line parser
-   (`src/parser.py`) is unchanged and still brittle; the new classification layer softens
-   this only for document-type identification (declared-label + document-number-pattern
-   cross-check, with an explicit `unknown` outcome), not for field-label parsing itself.
+   (`src/parser.py`) is unchanged and still brittle; the classification layer (P1)
+   softens this only for document-type identification, not field-label parsing itself.
 2. ~~Confidence is based on field completeness, not calibrated model confidence.~~ The
-   legacy `completeness` score is still a raw ratio (unchanged). The new `evidence.fields[*].confidence`
-   is a *different*, additive, deterministic heuristic derived from document quality and
-   per-field format validation — it is also not a calibrated probability, and this is
-   stated explicitly in `docs/data_dictionary.md`.
-3. Case verification is merely an aggregation of document results; it does not perform
-   robust entity resolution. **As of stage P2, this is partially addressed**: an explicit
-   `src/identity_resolution/` capability now compares full_name/date_of_birth/address
-   across the submitted application and every document's evidence and reports a
-   `CONFLICT`/`FUZZY_MATCH`/`NORMALIZED_MATCH`/`EXACT`/`INSUFFICIENT_EVIDENCE` verdict
-   (see `docs/data_dictionary.md`). The `decision` field itself still does not consult
-   this result — case-level APPROVE/REVIEW/REJECT remains the unchanged worst-of-documents
-   policy, pending a later risk-policy stage.
-4. Fraud handling is limited to obvious synthetic markers. **As of stage P4, this is
-   now an explicit, separable evidence layer**: `src/fraud_signals/` reports labeled
-   `FraudSignal` findings (tamper marker, temporal impossibility, identity conflict,
-   document duplication, extraction inconsistency) behind a `DocumentForensicsProvider`
-   interface a real forensics provider could later implement. The underlying detection
-   capability is still limited to the same synthetic text marker plus signals derived
-   from P1-P3's evidence/validation/identity layers — no pixel-level forensics exists,
-   and this is disclosed rather than implied. `src/rules.py`'s own tamper check is
-   unchanged. See `docs/data_dictionary.md`.
-5. No provider adapter, reviewer queue, persistence layer, trace spans or policy
-   versioning. A provider adapter now exists for document evidence extraction
-   (`DocumentIntelligenceProvider`); reviewer queue, persistence, tracing and policy
-   versioning remain absent. Rule-level versioning now exists for validation rules
-   (`ValidationResult.rule_version`), but there is still no versioning of the overall
-   decision policy in `src/rules.py`.
-6. **As of stage P3**: validation logic that was embedded in `src/rules.py`'s single
-   `evaluate()` function (format checks, expiry handling, mandatory-field completeness)
-   is now decomposed into `src/evidence_validation/` as individually auditable,
-   schema-validated rules (10 categories, each result carrying `rule_id`, `severity`,
-   `reason_code`, `explanation` and `evidence_references`). `src/rules.py` itself is
-   **unchanged in its decision logic** — it still independently computes
-   completeness/expiry/format/tamper and maps them to APPROVE/REVIEW/REJECT exactly as
-   before; the new validation layer runs alongside it, not underneath it, in this stage.
-   `config/baseline.json` is now genuinely authoritative for `mandatory_fields` and
-   `min_field_completeness_for_approve` (via `src/policy.py`), partially closing a gap
-   the P0 baseline assessment flagged.
-7. **As of stage P4**: fraud/anomaly evidence is now a distinct subsystem
-   (`src/fraud_signals/`), separated from decision policy in the same way P3 separated
-   validation from decisioning. It reuses P2/P3's already-computed `FAIL`/`CONFLICT`
-   findings rather than re-implementing checks, and preserves a hard architectural
-   distinction between `FRAUD_SIGNAL_PRESENT` (evidence exists) and `FRAUD_PROVEN`
-   (reserved — no code path in this repository can produce it; proving fraud needs
-   evidence this offline system cannot generate). No LLM is called anywhere in this
-   fraud-signal layer, or anywhere in this repository.
+   legacy `completeness` score is unchanged. `evidence.fields[*].confidence` (P1) is a
+   separate, deterministic heuristic, explicitly not a calibrated probability. P5's
+   `risk_assessment.evidence_strength`/`uncertainty` are further separate, also
+   explicitly not calibrated probabilities — see `docs/data_dictionary.md`.
+3. **RESOLVED as of stage P5** (was: "case verification is merely an aggregation of
+   document results; it does not perform robust entity resolution"). P2 added
+   `identity_resolution` as a reporting-only capability; P5 makes its findings an actual
+   input to the case decision via `src/decision_policy/`. Concretely: `CASE-005`
+   (`name_variation_ocr_error`) went from `APPROVE` (P0-P4, the documented brownfield
+   gap) to `REVIEW` (P5) because its identity-attribute conflict is now a risk factor
+   the policy consults. A conflicting date_of_birth specifically is a hard stop
+   (`REJECT`); a conflicting name/address alone is review-level, not an automatic
+   rejection, since spelling/transliteration variance can plausibly fall below the
+   fuzzy-match threshold without being fraudulent (a deliberate, documented policy
+   choice, not an oversight).
+4. Fraud handling capability is still limited to the same synthetic text marker plus
+   signals derived from P1-P3's evidence/validation/identity layers (`src/fraud_signals/`,
+   P4) — no pixel-level forensics exists, and P5's policy consumes these signals (a
+   CRITICAL-severity fraud signal is a hard stop) without pretending the underlying
+   detection capability is any stronger than it is.
+5. No provider adapter, reviewer queue, persistence layer, or trace spans.
+   `DocumentIntelligenceProvider` (P1) and `DocumentForensicsProvider` (P4) exist as
+   provider adapters; reviewer queue, persistence and tracing remain absent. Rule-level
+   versioning exists for validation rules (`ValidationResult.rule_version`, P3) and for
+   the decision policy itself (`RiskAssessment.policy_version`, P5); there is still no
+   versioning of `src/rules.py`'s per-document rules.
+6. Validation logic that was embedded in `src/rules.py`'s single `evaluate()` function
+   is decomposed into `src/evidence_validation/` (P3) as individually auditable,
+   schema-validated rules. `src/rules.py`'s per-document decision logic itself is
+   **still unchanged since P0** — it still independently computes
+   completeness/expiry/format/tamper for each document, and that per-document decision
+   remains one input among several to P5's case-level policy (see constraint 3).
+   `config/baseline.json` is genuinely authoritative for `mandatory_fields` and
+   `min_field_completeness_for_approve` (via `src/policy.py`, P3).
+7. Fraud/anomaly evidence is a distinct subsystem (`src/fraud_signals/`, P4), separated
+   from decision policy the way P3 separated validation from decisioning. The hard
+   architectural distinction between `FRAUD_SIGNAL_PRESENT` (evidence exists) and
+   `FRAUD_PROVEN` (reserved — no code path in this repository can produce it) is
+   preserved unchanged by P5: a CRITICAL fraud signal is a hard-stop *input* to the
+   policy, but the policy still never claims fraud is *proven*. No LLM is called
+   anywhere in this repository, at any stage, for any determination — consequential
+   decisions in this repository are 100% deterministic, rule-based Python.
+8. **As of stage P5**: `src/decision_policy/` is the first component in this repository
+   whose entire purpose is producing the case-level decision from aggregated evidence.
+   It is deliberately rule-based rather than a weighted score: every `RiskFactor` has an
+   explicit `triggers_hard_stop` boolean set where it is derived, and the policy
+   decision is nothing more than "any hard-stop factor → REJECT; any factor →
+   REVIEW; no factors → APPROVE" — fully inspectable and testable
+   (`tests/test_decision_policy.py`), not an opaque score crossing a threshold.

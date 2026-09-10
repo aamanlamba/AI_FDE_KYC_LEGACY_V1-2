@@ -3,7 +3,9 @@
   "decision": "REJECT",
   "reason_codes": [
     "BASELINE_RULES_PASSED",
-    "DOCUMENT_EXPIRED"
+    "DOCUMENT_EXPIRED",
+    "HARD_STOP:document_decision",
+    "REVIEW:validation_failure"
   ],
   "documents": [
     {
@@ -547,7 +549,7 @@
       }
     }
   ],
-  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution, validation and fraud_assessment are now computed and reported (see identity_resolution.overall_status/confidence, validation.document_reports/case_level_results and fraud_assessment.status/reason_codes) but none of them is yet consulted by the decision policy.",
+  "limitation_notice": "Repo 1.0.2 case decisions are computed by an explicit, deterministic decision policy (src/decision_policy/, policy_version in risk_assessment.policy_version) over evidence, identity resolution, validation and fraud signals -- no longer a worst-of-documents aggregation. See risk_assessment.risk_factors/explanation for the full, inspectable basis of this decision.",
   "identity_resolution": {
     "case_id": "CASE-004",
     "overall_status": "EXACT",
@@ -1116,5 +1118,45 @@
       "NO_FRAUD_SIGNALS_DETECTED"
     ],
     "explanation": "No fraud signals were detected from the available offline evidence."
+  },
+  "risk_assessment": {
+    "case_id": "CASE-004",
+    "policy_version": "1.0.0",
+    "risk_factors": [
+      {
+        "factor_id": "CASE-004-PASSPORT:DOCUMENT_REJECT",
+        "category": "document_decision",
+        "severity": "CRITICAL",
+        "triggers_hard_stop": true,
+        "description": "CASE-004-PASSPORT independently REJECTed by document-level rules: DOCUMENT_EXPIRED.",
+        "source": "rules.evaluate",
+        "evidence_references": [
+          "data/sidecar_ocr/CASE-004-PASSPORT.txt"
+        ]
+      },
+      {
+        "factor_id": "CASE-004-PASSPORT:EXPIRY-NOT-PAST:FAIL",
+        "category": "validation_failure",
+        "severity": "HIGH",
+        "triggers_hard_stop": false,
+        "description": "CASE-004-PASSPORT: expiry_date 2025-04-30 is before the reference date 2026-09-09.",
+        "source": "evidence_validation:EXPIRY-NOT-PAST",
+        "evidence_references": [
+          "data/sidecar_ocr/CASE-004-PASSPORT.txt#field=expiry_date"
+        ]
+      }
+    ],
+    "evidence_strength": 0.985,
+    "uncertainty": 0.0,
+    "validation_failure_count": 1,
+    "identity_conflict_count": 0,
+    "fraud_signal_count": 0,
+    "hard_stop_triggered": true,
+    "policy_outcome": "REJECT",
+    "reason_codes": [
+      "HARD_STOP:document_decision",
+      "REVIEW:validation_failure"
+    ],
+    "explanation": "Case CASE-004: 2 risk factor(s) found (1x document_decision, 1x validation_failure). Policy outcome: REJECT, triggered by 1 hard-stop factor(s): CASE-004-PASSPORT:DOCUMENT_REJECT: CASE-004-PASSPORT independently REJECTed by document-level rules: DOCUMENT_EXPIRED."
   }
 }

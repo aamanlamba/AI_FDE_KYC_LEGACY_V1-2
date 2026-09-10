@@ -11,12 +11,20 @@ The following issues are known in the inherited system. They describe the curren
   interface whose only implementation today is a literal text-marker scan — not
   pixel-level forensics, which this repository has no capability to perform (its OCR
   layer never reads image pixels at all). See `docs/data_dictionary.md`.
-- Cross-document identity consistency is weak. As of stage P2, `src/identity_resolution/`
-  explicitly reports attribute-level match status (see `docs/data_dictionary.md`), but the
-  case `decision` still does not consult it — this is reporting, not a risk gate.
+- Cross-document identity consistency is weak. **RESOLVED as a decision input as of
+  stage P5**: `src/identity_resolution/` (P2) reports attribute-level match status, and
+  `src/decision_policy/` (P5) now consults it — a conflicting `date_of_birth` is a hard
+  stop (REJECT), any other identity conflict/fuzzy-match/insufficient-evidence is
+  review-level. `CASE-005` (the case this exact gap was demonstrated on) now correctly
+  reaches `REVIEW` instead of silently `APPROVE`-ing. See `docs/data_dictionary.md`.
 - No transliteration or locale-aware name normalization exists.
 - Confidence is a heuristic completeness ratio rather than a calibrated probability.
-- Case results are driven by simple document-result aggregation.
+  P5's `risk_assessment.evidence_strength`/`uncertainty` are further, separate
+  heuristics — also explicitly not calibrated probabilities (see `docs/data_dictionary.md`).
+- Case results are driven by simple document-result aggregation. **RESOLVED as of stage
+  P5**: `CaseResult.decision` is now the explicit output of `src/decision_policy/`'s
+  rule-based policy, not "the worst individual document decision." Per-document
+  decisions (`src/rules.py`, unchanged since P0) remain one input among several.
 - Tamper detection is limited to a synthetic marker in the training data. As of stage
   P4, `src/rules.py`'s decision-relevant tamper check is unchanged (still the same
   literal marker match, now sourced from a shared `TAMPER_MARKER` constant), and a
@@ -39,7 +47,12 @@ The following issues are known in the inherited system. They describe the curren
   a result.
 - Privacy retention and deletion controls are not implemented in application code.
 - Error handling is uneven across parsing and validation paths.
-- Several business decisions are encoded directly in Python conditionals.
+- Several business decisions are encoded directly in Python conditionals. As of stage
+  P5, the case-level decision policy (`src/decision_policy/`) is still plain Python
+  conditionals by deliberate choice (requirement: avoid opaque weighted scoring) — but
+  it is now one small, named, versioned, directly-tested rule set
+  (`src/decision_policy/engine.py`, `RiskAssessment.policy_version`) rather than logic
+  buried inside a single per-document function.
 - Changes to document formats can require code changes and regression retesting.
 - `config/baseline.json` records expected baseline settings, but the legacy rule engine
   still hard-codes several of those values rather than consuming the file as authoritative

@@ -159,9 +159,10 @@ def test_raw_and_normalized_values_are_both_retained():
 
 # --- case-level integration: legacy decisioning untouched -----------------------
 
-def test_identity_resolution_does_not_change_the_legacy_decision():
+def test_identity_conflict_now_informs_the_case_decision():
     result = verify_case("CASE-005")
-    # CASE-005's identity is now flagged CONFLICT, but the P0/P1-era decision policy
-    # (worst-of-documents) is deliberately unchanged in this stage.
-    assert result.decision == "APPROVE"
+    # At P2, identity_resolution was reporting-only and did not affect `decision`
+    # (worst-of-documents, unchanged through P4). As of P5's decision policy, this
+    # CONFLICT is a risk factor that correctly escalates the case to REVIEW.
     assert result.identity_resolution.overall_status == MatchStatus.CONFLICT
+    assert result.decision == "REVIEW"

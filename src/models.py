@@ -1,12 +1,12 @@
-from typing import Literal, Any
+from typing import Any
 from pydantic import BaseModel, Field
 
 from .document_intelligence import DocumentEvidence
 from .identity_resolution import IdentityResolutionResult
 from .evidence_validation import DocumentValidationReport, CaseValidationReport
 from .fraud_signals import DocumentFraudSignals, FraudAssessment
-
-Decision = Literal["APPROVE","REVIEW","REJECT"]
+from .decision_policy import RiskAssessment
+from .policy import Decision
 
 class VerifyDocumentRequest(BaseModel):
     document_id: str = Field(min_length=3, max_length=80)
@@ -33,3 +33,4 @@ class CaseResult(BaseModel):
     identity_resolution: IdentityResolutionResult
     validation: CaseValidationReport
     fraud_assessment: FraudAssessment
+    risk_assessment: RiskAssessment

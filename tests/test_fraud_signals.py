@@ -212,9 +212,11 @@ def test_no_real_case_ever_reaches_fraud_proven():
 
 # --- separation from decision policy (requirement 2) ------------------------------
 
-def test_fraud_assessment_does_not_change_the_legacy_decision():
+def test_fraud_signal_now_informs_the_case_decision():
     result = verify_case("CASE-005")
-    # CASE-005 now carries an identity_conflict fraud signal, but src/rules.py's
-    # decision policy (P5's domain) is unchanged in this stage.
-    assert result.decision == "APPROVE"
+    # At P4, fraud_assessment was reporting-only. As of P5's decision policy, this
+    # MEDIUM-severity identity-conflict-derived signal contributes to (but does not
+    # alone hard-stop) the case, which correctly escalates to REVIEW rather than
+    # REJECT -- a single MEDIUM fraud signal is review-level, not a hard stop.
     assert result.fraud_assessment.status == FraudAssessmentStatus.FRAUD_SIGNAL_PRESENT
+    assert result.decision == "REVIEW"

@@ -8,7 +8,10 @@ apply, so the service still runs offline if the config file is missing or partia
 """
 
 from pathlib import Path
+from typing import Literal
 import json
+
+Decision = Literal["APPROVE", "REVIEW", "REJECT"]
 
 _ROOT = Path(__file__).resolve().parent.parent
 _CONFIG_PATH = _ROOT / "config" / "baseline.json"

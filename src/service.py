@@ -7,8 +7,7 @@ from .document_intelligence import extract_evidence, get_default_provider
 from .identity_resolution import resolve_identity
 from .evidence_validation import validate_document as validate_document_evidence, validate_case as validate_case_evidence
 from .fraud_signals import assess_document_fraud_signals, assess_case_fraud
-
-RANK={'APPROVE':0,'REVIEW':1,'REJECT':2}
+from .decision_policy import DocumentEvidenceSummary, build_evidence_bundle, assess_case_risk
 
 def verify_document(document_id: str) -> DocumentResult:
     text=extract_text(document_id)
@@ -24,14 +23,20 @@ def verify_document(document_id: str) -> DocumentResult:
 def verify_case(case_id: str) -> CaseResult:
     app=load_application(case_id)
     docs=[verify_document(x) for x in app['document_ids']]
-    worst=max(docs,key=lambda x:RANK[x.decision]).decision
-    reason_codes=sorted({r for d in docs for r in d.reason_codes})
+    legacy_reason_codes=sorted({r for d in docs for r in d.reason_codes})
     identity_resolution=resolve_identity(case_id,app,[d.evidence for d in docs])
     validation=validate_case_evidence(case_id,[d.validation for d in docs],[d.evidence for d in docs])
     fraud_assessment=assess_case_fraud(case_id,[d.fraud_signals for d in docs],identity_resolution,validation)
-    return CaseResult(case_id=case_id,decision=worst,reason_codes=reason_codes,documents=docs,
-      limitation_notice='Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); '
-        'identity_resolution, validation and fraud_assessment are now computed and reported (see '
-        'identity_resolution.overall_status/confidence, validation.document_reports/case_level_results and '
-        'fraud_assessment.status/reason_codes) but none of them is yet consulted by the decision policy.',
-      identity_resolution=identity_resolution,validation=validation,fraud_assessment=fraud_assessment)
+    document_summaries=[DocumentEvidenceSummary(document_id=d.document_id,legacy_decision=d.decision,
+        legacy_reason_codes=d.reason_codes,evidence=d.evidence,validation=d.validation,
+        fraud_signals=d.fraud_signals) for d in docs]
+    bundle=build_evidence_bundle(case_id,document_summaries,identity_resolution,validation,fraud_assessment)
+    risk_assessment=assess_case_risk(bundle)
+    reason_codes=sorted(set(legacy_reason_codes)|set(risk_assessment.reason_codes))
+    return CaseResult(case_id=case_id,decision=risk_assessment.policy_outcome,reason_codes=reason_codes,documents=docs,
+      limitation_notice='Repo 1.0.2 case decisions are computed by an explicit, deterministic decision policy '
+        '(src/decision_policy/, policy_version in risk_assessment.policy_version) over evidence, identity '
+        'resolution, validation and fraud signals -- no longer a worst-of-documents aggregation. See '
+        'risk_assessment.risk_factors/explanation for the full, inspectable basis of this decision.',
+      identity_resolution=identity_resolution,validation=validation,fraud_assessment=fraud_assessment,
+      risk_assessment=risk_assessment)

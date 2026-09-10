@@ -3,6 +3,8 @@
   "decision": "REJECT",
   "reason_codes": [
     "BASELINE_RULES_PASSED",
+    "HARD_STOP:document_decision",
+    "HARD_STOP:fraud_signal",
     "SUSPECTED_TAMPERING"
   ],
   "documents": [
@@ -559,7 +561,7 @@
       }
     }
   ],
-  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution, validation and fraud_assessment are now computed and reported (see identity_resolution.overall_status/confidence, validation.document_reports/case_level_results and fraud_assessment.status/reason_codes) but none of them is yet consulted by the decision policy.",
+  "limitation_notice": "Repo 1.0.2 case decisions are computed by an explicit, deterministic decision policy (src/decision_policy/, policy_version in risk_assessment.policy_version) over evidence, identity resolution, validation and fraud signals -- no longer a worst-of-documents aggregation. See risk_assessment.risk_factors/explanation for the full, inspectable basis of this decision.",
   "identity_resolution": {
     "case_id": "CASE-006",
     "overall_status": "EXACT",
@@ -1140,5 +1142,45 @@
       "FRAUD_SIGNAL:tamper_marker"
     ],
     "explanation": "1 fraud signal(s) detected across 2 document(s)."
+  },
+  "risk_assessment": {
+    "case_id": "CASE-006",
+    "policy_version": "1.0.0",
+    "risk_factors": [
+      {
+        "factor_id": "CASE-006-PASSPORT:DOCUMENT_REJECT",
+        "category": "document_decision",
+        "severity": "CRITICAL",
+        "triggers_hard_stop": true,
+        "description": "CASE-006-PASSPORT independently REJECTed by document-level rules: SUSPECTED_TAMPERING.",
+        "source": "rules.evaluate",
+        "evidence_references": [
+          "data/sidecar_ocr/CASE-006-PASSPORT.txt"
+        ]
+      },
+      {
+        "factor_id": "FRAUD:CASE-006-PASSPORT:TAMPER_MARKER_DETECTED",
+        "category": "fraud_signal",
+        "severity": "CRITICAL",
+        "triggers_hard_stop": true,
+        "description": "The deterministic OCR sidecar contains the synthetic tamper-fixture marker 'ALTERED_TEXT_REGION_DETECTED'. This is a training-data fixture signal, not a cryptographic or pixel-level forensic finding.",
+        "source": "deterministic_marker_forensics:sidecar_text_substring_match",
+        "evidence_references": [
+          "data/sidecar_ocr/CASE-006-PASSPORT.txt"
+        ]
+      }
+    ],
+    "evidence_strength": 0.985,
+    "uncertainty": 0.0,
+    "validation_failure_count": 0,
+    "identity_conflict_count": 0,
+    "fraud_signal_count": 1,
+    "hard_stop_triggered": true,
+    "policy_outcome": "REJECT",
+    "reason_codes": [
+      "HARD_STOP:document_decision",
+      "HARD_STOP:fraud_signal"
+    ],
+    "explanation": "Case CASE-006: 2 risk factor(s) found (1x document_decision, 1x fraud_signal). Policy outcome: REJECT, triggered by 2 hard-stop factor(s): CASE-006-PASSPORT:DOCUMENT_REJECT: CASE-006-PASSPORT independently REJECTed by document-level rules: SUSPECTED_TAMPERING.; FRAUD:CASE-006-PASSPORT:TAMPER_MARKER_DETECTED: The deterministic OCR sidecar contains the synthetic tamper-fixture marker 'ALTERED_TEXT_REGION_DETECTED'. This is a training-data fixture signal, not a cryptographic or pixel-level forensic finding."
   }
 }

@@ -2,7 +2,8 @@
   "case_id": "CASE-002",
   "decision": "REVIEW",
   "reason_codes": [
-    "MANUAL_REVIEW_REQUIRED"
+    "MANUAL_REVIEW_REQUIRED",
+    "REVIEW:document_decision"
   ],
   "documents": [
     {
@@ -558,7 +559,7 @@
       }
     }
   ],
-  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution, validation and fraud_assessment are now computed and reported (see identity_resolution.overall_status/confidence, validation.document_reports/case_level_results and fraud_assessment.status/reason_codes) but none of them is yet consulted by the decision policy.",
+  "limitation_notice": "Repo 1.0.2 case decisions are computed by an explicit, deterministic decision policy (src/decision_policy/, policy_version in risk_assessment.policy_version) over evidence, identity resolution, validation and fraud signals -- no longer a worst-of-documents aggregation. See risk_assessment.risk_factors/explanation for the full, inspectable basis of this decision.",
   "identity_resolution": {
     "case_id": "CASE-002",
     "overall_status": "EXACT",
@@ -1127,5 +1128,44 @@
       "NO_FRAUD_SIGNALS_DETECTED"
     ],
     "explanation": "No fraud signals were detected from the available offline evidence."
+  },
+  "risk_assessment": {
+    "case_id": "CASE-002",
+    "policy_version": "1.0.0",
+    "risk_factors": [
+      {
+        "factor_id": "CASE-002-PASSPORT:DOCUMENT_REVIEW",
+        "category": "document_decision",
+        "severity": "MEDIUM",
+        "triggers_hard_stop": false,
+        "description": "CASE-002-PASSPORT independently flagged for REVIEW by document-level rules: MANUAL_REVIEW_REQUIRED.",
+        "source": "rules.evaluate",
+        "evidence_references": [
+          "data/sidecar_ocr/CASE-002-PASSPORT.txt"
+        ]
+      },
+      {
+        "factor_id": "CASE-002-NID:DOCUMENT_REVIEW",
+        "category": "document_decision",
+        "severity": "MEDIUM",
+        "triggers_hard_stop": false,
+        "description": "CASE-002-NID independently flagged for REVIEW by document-level rules: MANUAL_REVIEW_REQUIRED.",
+        "source": "rules.evaluate",
+        "evidence_references": [
+          "data/sidecar_ocr/CASE-002-NID.txt"
+        ]
+      }
+    ],
+    "evidence_strength": 0.875,
+    "uncertainty": 0.0,
+    "validation_failure_count": 0,
+    "identity_conflict_count": 0,
+    "fraud_signal_count": 0,
+    "hard_stop_triggered": false,
+    "policy_outcome": "REVIEW",
+    "reason_codes": [
+      "REVIEW:document_decision"
+    ],
+    "explanation": "Case CASE-002: 2 risk factor(s) found (2x document_decision), none of which is a hard-stop condition. Policy outcome: REVIEW."
   }
 }

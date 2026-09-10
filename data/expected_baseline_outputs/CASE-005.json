@@ -1,8 +1,10 @@
 {
   "case_id": "CASE-005",
-  "decision": "APPROVE",
+  "decision": "REVIEW",
   "reason_codes": [
-    "BASELINE_RULES_PASSED"
+    "BASELINE_RULES_PASSED",
+    "REVIEW:fraud_signal",
+    "REVIEW:identity_conflict"
   ],
   "documents": [
     {
@@ -546,7 +548,7 @@
       }
     }
   ],
-  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution, validation and fraud_assessment are now computed and reported (see identity_resolution.overall_status/confidence, validation.document_reports/case_level_results and fraud_assessment.status/reason_codes) but none of them is yet consulted by the decision policy.",
+  "limitation_notice": "Repo 1.0.2 case decisions are computed by an explicit, deterministic decision policy (src/decision_policy/, policy_version in risk_assessment.policy_version) over evidence, identity resolution, validation and fraud signals -- no longer a worst-of-documents aggregation. See risk_assessment.risk_factors/explanation for the full, inspectable basis of this decision.",
   "identity_resolution": {
     "case_id": "CASE-005",
     "overall_status": "CONFLICT",
@@ -1136,5 +1138,47 @@
       "FRAUD_SIGNAL:identity_conflict"
     ],
     "explanation": "1 fraud signal(s) detected across 2 document(s)."
+  },
+  "risk_assessment": {
+    "case_id": "CASE-005",
+    "policy_version": "1.0.0",
+    "risk_factors": [
+      {
+        "factor_id": "CASE-005:full_name:CONFLICT",
+        "category": "identity_conflict",
+        "severity": "HIGH",
+        "triggers_hard_stop": false,
+        "description": "Identity attribute 'full_name' conflicts across evidence sources for this case.",
+        "source": "identity_resolution",
+        "evidence_references": [
+          "CASE-005-NID",
+          "CASE-005-PASSPORT"
+        ]
+      },
+      {
+        "factor_id": "FRAUD:CASE-005:full_name:CASE-005-PASSPORT:CASE-005-NID",
+        "category": "fraud_signal",
+        "severity": "MEDIUM",
+        "triggers_hard_stop": false,
+        "description": "Conflicting full_name between CASE-005-PASSPORT and CASE-005-NID (SIMILARITY=0.688).",
+        "source": "identity_resolution:full_name",
+        "evidence_references": [
+          "CASE-005-PASSPORT",
+          "CASE-005-NID"
+        ]
+      }
+    ],
+    "evidence_strength": 0.485,
+    "uncertainty": 0.0,
+    "validation_failure_count": 0,
+    "identity_conflict_count": 1,
+    "fraud_signal_count": 1,
+    "hard_stop_triggered": false,
+    "policy_outcome": "REVIEW",
+    "reason_codes": [
+      "REVIEW:fraud_signal",
+      "REVIEW:identity_conflict"
+    ],
+    "explanation": "Case CASE-005: 2 risk factor(s) found (1x fraud_signal, 1x identity_conflict), none of which is a hard-stop condition. Policy outcome: REVIEW."
   }
 }
