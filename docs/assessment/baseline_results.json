@@ -1,0 +1,294 @@
+{
+  "assessment_date": "2026-09-10",
+  "repo_commit": "5782d8b",
+  "environment": {
+    "python_version": "3.14.7",
+    "note": "outside documented 3.11-3.13 range but within preflight's accepted floor (>=3.11)"
+  },
+  "gate_results": {
+    "preflight": "PASSED",
+    "sanity_check": "PASSED",
+    "pytest_summary": "22 passed, 1 warning in 0.38s",
+    "pytest_returncode": 0,
+    "smoke_server": "PASSED"
+  },
+  "timing": {
+    "verify_document_calls": 500,
+    "verify_document_seconds": 0.021,
+    "verify_document_calls_per_sec": 23802.8,
+    "verify_case_calls": 100,
+    "verify_case_seconds": 0.0458,
+    "verify_case_calls_per_sec": 2182.9,
+    "caveat": "in-process single-threaded microbenchmark, no HTTP/ASGI overhead, not a load test"
+  },
+  "cases": [
+    {
+      "case_id": "CASE-001",
+      "scenario": "clean",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "document_ids": [
+        "CASE-001-PASSPORT",
+        "CASE-001-NID",
+        "CASE-001-DL"
+      ],
+      "matches_expected_baseline_output": true
+    },
+    {
+      "case_id": "CASE-002",
+      "scenario": "noisy_scan",
+      "decision": "REVIEW",
+      "reason_codes": [
+        "MANUAL_REVIEW_REQUIRED"
+      ],
+      "document_ids": [
+        "CASE-002-PASSPORT",
+        "CASE-002-NID"
+      ],
+      "matches_expected_baseline_output": true
+    },
+    {
+      "case_id": "CASE-003",
+      "scenario": "rotated_document",
+      "decision": "REVIEW",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED",
+        "MANUAL_REVIEW_REQUIRED"
+      ],
+      "document_ids": [
+        "CASE-003-DL",
+        "CASE-003-PASSPORT"
+      ],
+      "matches_expected_baseline_output": true
+    },
+    {
+      "case_id": "CASE-004",
+      "scenario": "expired_passport",
+      "decision": "REJECT",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED",
+        "DOCUMENT_EXPIRED"
+      ],
+      "document_ids": [
+        "CASE-004-PASSPORT",
+        "CASE-004-NID"
+      ],
+      "matches_expected_baseline_output": true
+    },
+    {
+      "case_id": "CASE-005",
+      "scenario": "name_variation_ocr_error",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "document_ids": [
+        "CASE-005-PASSPORT",
+        "CASE-005-NID"
+      ],
+      "matches_expected_baseline_output": true
+    },
+    {
+      "case_id": "CASE-006",
+      "scenario": "suspected_tampering",
+      "decision": "REJECT",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED",
+        "SUSPECTED_TAMPERING"
+      ],
+      "document_ids": [
+        "CASE-006-PASSPORT",
+        "CASE-006-DL"
+      ],
+      "matches_expected_baseline_output": true
+    }
+  ],
+  "documents": [
+    {
+      "document_id": "CASE-001-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "warnings": [],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-001-NID",
+      "document_type": "NATIONAL_ID",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "warnings": [],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-001-DL",
+      "document_type": "DRIVING_LICENCE",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "warnings": [],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-002-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "REVIEW",
+      "reason_codes": [
+        "MANUAL_REVIEW_REQUIRED"
+      ],
+      "warnings": [
+        "DEGRADED_OCR_QUALITY",
+        "OCR_QUALITY_DEGRADED"
+      ],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-002-NID",
+      "document_type": "NATIONAL_ID",
+      "decision": "REVIEW",
+      "reason_codes": [
+        "MANUAL_REVIEW_REQUIRED"
+      ],
+      "warnings": [
+        "DEGRADED_OCR_QUALITY",
+        "OCR_QUALITY_DEGRADED"
+      ],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-003-DL",
+      "document_type": "DRIVING_LICENCE",
+      "decision": "REVIEW",
+      "reason_codes": [
+        "MANUAL_REVIEW_REQUIRED"
+      ],
+      "warnings": [
+        "ROTATED_CAPTURE",
+        "ROTATED_DOCUMENT"
+      ],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-003-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "warnings": [],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-004-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "REJECT",
+      "reason_codes": [
+        "DOCUMENT_EXPIRED"
+      ],
+      "warnings": [],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-004-NID",
+      "document_type": "NATIONAL_ID",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "warnings": [],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-005-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "warnings": [],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-005-NID",
+      "document_type": "NATIONAL_ID",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "warnings": [],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 5,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": [
+        {
+          "field": "full_name",
+          "ground_truth": "Mohammad Rehman",
+          "parsed": "Moharnmad Rehrnan"
+        }
+      ]
+    },
+    {
+      "document_id": "CASE-006-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "REJECT",
+      "reason_codes": [
+        "SUSPECTED_TAMPERING"
+      ],
+      "warnings": [],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    },
+    {
+      "document_id": "CASE-006-DL",
+      "document_type": "DRIVING_LICENCE",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "warnings": [],
+      "mandatory_completeness": 1.0,
+      "ground_truth_field_match_count": 6,
+      "ground_truth_field_total": 6,
+      "ground_truth_mismatches": []
+    }
+  ]
+}
