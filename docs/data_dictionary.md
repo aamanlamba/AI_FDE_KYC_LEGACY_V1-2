@@ -299,3 +299,81 @@ hard-stop/review split makes every decision traceable to specific, named factors
 (`tests/test_decision_policy.py` tests the rule list directly, not a threshold on a
 score). `evidence_strength`/`uncertainty` still provide the descriptive numeric summaries
 `RiskAssessment` asks for, but only as analyst context — never as the decision input.
+
+## Human-in-the-loop review (`src/review/`, added in stage P6)
+
+Unlike every prior stage's evidence layers, `ReviewCase` is **not** an additive field on
+`CaseResult` — it is a separate, durable resource behind new API paths (existing
+endpoints and response shapes are completely unaffected; see "New endpoints" below).
+Only a case whose `decision` is `REVIEW` may open an ordinary review — any other
+decision is rejected (`409`), since no alternate policy route into this workflow is
+defined in this repository.
+
+### Persistence
+SQLite (`src/review/store.py`, `ReviewStore`) — a locally-runnable, dependency-free
+(stdlib `sqlite3`) durable store. Default file path is `var/review_store.sqlite3`
+(gitignored; created on first use), overridable via the `REVIEW_DB_PATH` environment
+variable. `review_cases.status` is the only mutable column; every change to it is
+preceded by an insert-only row in `review_audit_log`, so the full transition history is
+always reconstructable.
+
+### `ReviewCase`
+| Field | Meaning |
+|---|---|
+| review_id | e.g. `RVW-CASE-005-683d3c53` |
+| case_id | The case this review is for |
+| trigger | The category of the highest-severity `RiskFactor` that led to `REVIEW` (e.g. `identity_conflict`) |
+| priority | `LOW` / `MEDIUM` / `HIGH`, derived from the highest severity among the case's risk factors |
+| evidence_summary | Concise structured snapshot: document count/types, key fields (`full_name`, `date_of_birth`) per document |
+| discrepancies | From `identity_resolution`: recorded conflicts, plus fuzzy-match attributes |
+| failed_validations | Every `FAIL`-status result from `validation` (document- and case-level) |
+| fraud_signals | Every signal from `fraud_assessment`, described |
+| reason_codes | Copied from the triggering `CaseResult.reason_codes` |
+| status | `OPEN` / `IN_REVIEW` / `RESOLVED` / `ESCALATED` |
+| created_at | Real wall-clock ISO8601 timestamp (this is genuinely operational state, unlike the deterministic evidence-computation layers, so it is intentionally not tied to the frozen `REFERENCE_DATE`) |
+| policy_version | `risk_assessment.policy_version` at the moment the review was opened |
+| reviewer_summary | Deterministic, evidence-grounded narrative (see below) |
+
+**Immutability**: every field above is captured once, when the review is opened, and
+never mutated afterward — not even by a later analyst correction. This is deliberate:
+an analyst's correction is recorded only in that transition's `ReviewAuditEntry.correction`,
+layered on top of the original snapshot, never overwriting it.
+
+### State machine
+```
+OPEN -> IN_REVIEW -> RESOLVED
+                   -> ESCALATED
+```
+`RESOLVED`/`ESCALATED` are terminal. Any pair not listed above — including a state
+transitioning to itself (e.g. re-submitting the same "start review" action) — is
+rejected with `409` and does not create a new audit entry or change `status`.
+
+### `ReviewAuditEntry` (append-only; `review_audit_log` table)
+| Field | Meaning |
+|---|---|
+| analyst_action | Free-text label of what the analyst did |
+| correction | Optional: a specific data correction the analyst notes (layered evidence, never a rewrite — see above) |
+| rationale | Required: why this action was taken |
+| timestamp | Real wall-clock ISO8601 |
+| prior_state, new_state | Captured automatically by the transition, not supplied by the caller |
+
+### Reviewer summary — grounding and the LLM guardrail
+`src/review/summary.py` defines `ReviewSummaryProvider`, an interface (mirroring
+`DocumentIntelligenceProvider`/`DocumentForensicsProvider`) whose only implementation in
+this repository, `DeterministicReviewSummaryProvider`, composes a narrative entirely
+from already-computed, already-retained evidence (`risk_assessment.explanation`,
+`identity_resolution.conflicts`, fraud signals) — deterministic, offline, and never
+inventing a claim the underlying `CaseResult` doesn't support. **No LLM is called
+anywhere in this repository.** If an LLM-generated summary capability were ever added,
+the interface requires any such implementation to: sit behind this interface; keep the
+deterministic offline fallback available regardless; ground every statement in the
+supplied evidence; and never invent facts.
+
+### New endpoints (additive; existing endpoints unchanged)
+| Method & path | Purpose |
+|---|---|
+| `POST /v1/cases/{case_id}/reviews` | Open a review (`201`), or return the existing open one if already open (`201`, idempotent-by-case); `409` if `decision != REVIEW` |
+| `GET /v1/reviews` | List reviews, optional `?status=` filter |
+| `GET /v1/reviews/{review_id}` | Get one review (`404` if unknown) |
+| `GET /v1/reviews/{review_id}/history` | The full, ordered audit trail |
+| `POST /v1/reviews/{review_id}/transitions` | Apply an analyst action (`409` on an invalid transition) |

@@ -66,6 +66,12 @@ Verify one applicant case:
 curl -X POST http://127.0.0.1:8000/v1/cases/CASE-005/verify
 ```
 
+Open a human review for a case whose decision is REVIEW (stage P6; see
+`docs/data_dictionary.md` for the full review-workflow contract):
+```bash
+curl -X POST http://127.0.0.1:8000/v1/cases/CASE-005/reviews
+```
+
 ## Run checks
 ```bash
 python scripts/workshop_preflight.py

@@ -120,3 +120,11 @@ P0 finding this closes.
    decision is nothing more than "any hard-stop factor → REJECT; any factor →
    REVIEW; no factors → APPROVE" — fully inspectable and testable
    (`tests/test_decision_policy.py`), not an opaque score crossing a threshold.
+9. **As of stage P6**: a `REVIEW` decision now has somewhere to go. `src/review/` is a
+   SQLite-backed, durable human-in-the-loop workflow (`ReviewCase`, a
+   `OPEN`→`IN_REVIEW`→`{RESOLVED,ESCALATED}` state machine, an append-only analyst audit
+   log) behind additive `/v1/cases/{id}/reviews` and `/v1/reviews/*` endpoints —
+   `/v1/documents/verify` and `/v1/cases/{id}/verify` are completely unaffected. Only
+   `REVIEW`-decision cases may enter this workflow. An analyst correction is recorded as
+   an annotation on the audit trail, never a rewrite of the original evidence snapshot.
+   See `docs/data_dictionary.md`.

@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import socket
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -26,13 +28,19 @@ def request(url: str, *, method: str = "GET", body: dict | None = None) -> tuple
         data = json.dumps(body).encode("utf-8")
         headers["Content-Type"] = "application/json"
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
-    with urllib.request.urlopen(req, timeout=3) as response:
-        return response.status, json.loads(response.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=3) as response:
+            return response.status, json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        # Some checks below deliberately exercise an expected non-2xx response.
+        return exc.code, json.loads(exc.read().decode("utf-8"))
 
 
 port = free_port()
 base = f"http://127.0.0.1:{port}"
 env = os.environ.copy()
+review_db_dir = tempfile.mkdtemp(prefix="kyc-review-smoke-")
+env["REVIEW_DB_PATH"] = str(Path(review_db_dir) / "review_store.sqlite3")
 proc = subprocess.Popen(
     [sys.executable, "-m", "uvicorn", "src.app:app", "--host", "127.0.0.1", "--port", str(port), "--log-level", "warning"],
     cwd=ROOT,
@@ -83,6 +91,27 @@ try:
     if status != 200 or case.get("decision") != "REJECT":
         raise RuntimeError(f"unexpected case verification response: {case}")
 
+    status, review = request(base + "/v1/cases/CASE-002/reviews", method="POST")
+    if status != 201 or review.get("status") != "OPEN":
+        raise RuntimeError(f"unexpected review-open response: status={status} body={review}")
+    review_id = review["review_id"]
+
+    status, conflict = request(base + "/v1/cases/CASE-001/reviews", method="POST")
+    if status != 409:
+        raise RuntimeError(f"expected 409 opening a review for a non-REVIEW case, got {status}: {conflict}")
+
+    status, in_review = request(
+        base + f"/v1/reviews/{review_id}/transitions",
+        method="POST",
+        body={"new_status": "IN_REVIEW", "analyst_action": "start", "rationale": "smoke test pickup"},
+    )
+    if status != 200 or in_review.get("status") != "IN_REVIEW":
+        raise RuntimeError(f"unexpected transition response: status={status} body={in_review}")
+
+    status, history = request(base + f"/v1/reviews/{review_id}/history")
+    if status != 200 or len(history) != 1:
+        raise RuntimeError(f"unexpected review history: status={status} body={history}")
+
     print(f"SMOKE SERVER PASSED on ephemeral localhost port {port}")
 finally:
     proc.terminate()
@@ -91,3 +120,4 @@ finally:
     except subprocess.TimeoutExpired:
         proc.kill()
         proc.wait(timeout=5)
+    shutil.rmtree(review_db_dir, ignore_errors=True)

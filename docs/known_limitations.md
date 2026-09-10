@@ -35,8 +35,16 @@ The following issues are known in the inherited system. They describe the curren
   duplication) — but this remains the same underlying synthetic-marker detection
   capability, not real forensics.
 - No external identity, registry or watchlist integration exists.
-- There is no durable human-review queue or evidence-review interface.
-- There is no durable audit datastore.
+- There is no durable human-review queue or evidence-review interface. **RESOLVED as of
+  stage P6**: `src/review/` is a SQLite-backed durable review workflow (`ReviewCase`,
+  `OPEN`/`IN_REVIEW`/`RESOLVED`/`ESCALATED` states, an append-only audit log of analyst
+  actions) behind additive `/v1/cases/{id}/reviews` and `/v1/reviews/*` endpoints. Only
+  `REVIEW`-decision cases may open an ordinary review (see `docs/data_dictionary.md`).
+- There is no durable audit datastore. **Partially addressed as of stage P6**: analyst
+  review actions are now durably, immutably logged (`review_audit_log`, insert-only).
+  Case *verification* itself (`/v1/cases/{id}/verify`) remains fully stateless/computed
+  fresh on every call, as it has since P0 — there is still no durable store of
+  verification decisions themselves, only of review-workflow actions taken on them.
 - Logging is basic and does not provide distributed transaction tracing.
 - No application metrics endpoint or formal SLO monitoring exists.
 - No rate limiting, authentication, authorization or tenant isolation is implemented in the training service.
