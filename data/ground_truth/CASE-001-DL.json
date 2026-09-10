@@ -1,0 +1,13 @@
+{
+  "document_id": "CASE-001-DL",
+  "case_id": "CASE-001",
+  "document_type": "driving_licence",
+  "full_name": "Aarav Mehta",
+  "date_of_birth": "1991-04-12",
+  "document_number": "MDL-771904",
+  "issue_date": "2024-01-10",
+  "expiry_date": "2034-01-09",
+  "address": "18 Cedar Avenue, Meridian City",
+  "nationality": null,
+  "scenario_flags": []
+}

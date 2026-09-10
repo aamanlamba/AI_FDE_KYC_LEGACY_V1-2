@@ -1,0 +1,51 @@
+{
+  "case_id": "CASE-004",
+  "decision": "REJECT",
+  "reason_codes": [
+    "BASELINE_RULES_PASSED",
+    "DOCUMENT_EXPIRED"
+  ],
+  "documents": [
+    {
+      "document_id": "CASE-004-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "REJECT",
+      "reason_codes": [
+        "DOCUMENT_EXPIRED"
+      ],
+      "parsed_fields": {
+        "document_type": "PASSPORT",
+        "full_name": "Leena Kapoor",
+        "date_of_birth": "1979-07-30",
+        "document_number": "PXT400492",
+        "issue_date": "2015-05-01",
+        "expiry_date": "2025-04-30",
+        "nationality": "Republic of Meridian"
+      },
+      "completeness": 1.0,
+      "warnings": [],
+      "source": "deterministic_sidecar_ocr"
+    },
+    {
+      "document_id": "CASE-004-NID",
+      "document_type": "NATIONAL_ID",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "parsed_fields": {
+        "document_type": "NATIONAL_ID",
+        "full_name": "Leena Kapoor",
+        "date_of_birth": "1979-07-30",
+        "document_number": "MID-4431-7710",
+        "issue_date": "2024-01-01",
+        "expiry_date": "2034-01-01",
+        "address": "11 Sunrise Street, Meridian City"
+      },
+      "completeness": 1.0,
+      "warnings": [],
+      "source": "deterministic_sidecar_ocr"
+    }
+  ],
+  "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."
+}

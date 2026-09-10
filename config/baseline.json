@@ -1,0 +1,14 @@
+{
+  "service_name": "ai-fde-kyc-brownfield-v1",
+  "api_version": "1.0.0",
+  "offline_ocr_mode": true,
+  "review_if_parse_errors": true,
+  "reject_if_expired": true,
+  "reject_if_tamper_marker": true,
+  "min_field_completeness_for_approve": 0.75,
+  "supported_document_types": [
+    "passport",
+    "national_id",
+    "driving_licence"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "case_id": "CASE-003",
+  "decision": "REVIEW",
+  "reason_codes": [
+    "BASELINE_RULES_PASSED",
+    "MANUAL_REVIEW_REQUIRED"
+  ],
+  "documents": [
+    {
+      "document_id": "CASE-003-DL",
+      "document_type": "DRIVING_LICENCE",
+      "decision": "REVIEW",
+      "reason_codes": [
+        "MANUAL_REVIEW_REQUIRED"
+      ],
+      "parsed_fields": {
+        "document_type": "DRIVING_LICENCE",
+        "full_name": "Vikram Sen",
+        "date_of_birth": "1995-02-21",
+        "document_number": "MDL-307745",
+        "issue_date": "2022-03-15",
+        "expiry_date": "2032-03-14",
+        "address": "7 Orchard Lane, Meridian City"
+      },
+      "completeness": 1.0,
+      "warnings": [
+        "ROTATED_CAPTURE",
+        "ROTATED_DOCUMENT"
+      ],
+      "source": "deterministic_sidecar_ocr"
+    },
+    {
+      "document_id": "CASE-003-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "parsed_fields": {
+        "document_type": "PASSPORT",
+        "full_name": "Vikram Sen",
+        "date_of_birth": "1995-02-21",
+        "document_number": "PXT300385",
+        "issue_date": "2020-09-20",
+        "expiry_date": "2030-09-19",
+        "nationality": "Republic of Meridian"
+      },
+      "completeness": 1.0,
+      "warnings": [],
+      "source": "deterministic_sidecar_ocr"
+    }
+  ],
+  "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."
+}

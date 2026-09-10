@@ -1,0 +1,70 @@
+{
+  "case_id": "CASE-001",
+  "decision": "APPROVE",
+  "reason_codes": [
+    "BASELINE_RULES_PASSED"
+  ],
+  "documents": [
+    {
+      "document_id": "CASE-001-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "parsed_fields": {
+        "document_type": "PASSPORT",
+        "full_name": "Aarav Mehta",
+        "date_of_birth": "1991-04-12",
+        "document_number": "PXT100184",
+        "issue_date": "2023-06-01",
+        "expiry_date": "2033-05-31",
+        "nationality": "Republic of Meridian"
+      },
+      "completeness": 1.0,
+      "warnings": [],
+      "source": "deterministic_sidecar_ocr"
+    },
+    {
+      "document_id": "CASE-001-NID",
+      "document_type": "NATIONAL_ID",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "parsed_fields": {
+        "document_type": "NATIONAL_ID",
+        "full_name": "Aarav Mehta",
+        "date_of_birth": "1991-04-12",
+        "document_number": "MID-8842-1109",
+        "issue_date": "2022-02-14",
+        "expiry_date": "2032-02-13",
+        "address": "18 Cedar Avenue, Meridian City"
+      },
+      "completeness": 1.0,
+      "warnings": [],
+      "source": "deterministic_sidecar_ocr"
+    },
+    {
+      "document_id": "CASE-001-DL",
+      "document_type": "DRIVING_LICENCE",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "parsed_fields": {
+        "document_type": "DRIVING_LICENCE",
+        "full_name": "Aarav Mehta",
+        "date_of_birth": "1991-04-12",
+        "document_number": "MDL-771904",
+        "issue_date": "2024-01-10",
+        "expiry_date": "2034-01-09",
+        "address": "18 Cedar Avenue, Meridian City"
+      },
+      "completeness": 1.0,
+      "warnings": [],
+      "source": "deterministic_sidecar_ocr"
+    }
+  ],
+  "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."
+}

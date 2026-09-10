@@ -1,0 +1,15 @@
+{
+  "document_id": "CASE-003-DL",
+  "case_id": "CASE-003",
+  "document_type": "driving_licence",
+  "full_name": "Vikram Sen",
+  "date_of_birth": "1995-02-21",
+  "document_number": "MDL-307745",
+  "issue_date": "2022-03-15",
+  "expiry_date": "2032-03-14",
+  "address": "7 Orchard Lane, Meridian City",
+  "nationality": null,
+  "scenario_flags": [
+    "rotated"
+  ]
+}

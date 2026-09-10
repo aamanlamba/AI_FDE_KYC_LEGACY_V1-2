@@ -1,0 +1,11 @@
+{
+  "case_id": "CASE-004",
+  "submitted_name": "Leena Kapoor",
+  "submitted_dob": "1979-07-30",
+  "submitted_address": "11 Sunrise Street, Meridian City",
+  "scenario": "expired_passport",
+  "document_ids": [
+    "CASE-004-PASSPORT",
+    "CASE-004-NID"
+  ]
+}

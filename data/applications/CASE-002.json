@@ -1,0 +1,11 @@
+{
+  "case_id": "CASE-002",
+  "submitted_name": "Nisha Rao",
+  "submitted_dob": "1988-11-03",
+  "submitted_address": "42 Lake View Road, Meridian City",
+  "scenario": "noisy_scan",
+  "document_ids": [
+    "CASE-002-PASSPORT",
+    "CASE-002-NID"
+  ]
+}

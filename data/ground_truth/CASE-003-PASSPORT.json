@@ -1,0 +1,13 @@
+{
+  "document_id": "CASE-003-PASSPORT",
+  "case_id": "CASE-003",
+  "document_type": "passport",
+  "full_name": "Vikram Sen",
+  "date_of_birth": "1995-02-21",
+  "document_number": "PXT300385",
+  "issue_date": "2020-09-20",
+  "expiry_date": "2030-09-19",
+  "address": null,
+  "nationality": "Republic of Meridian",
+  "scenario_flags": []
+}

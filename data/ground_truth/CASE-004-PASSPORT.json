@@ -1,0 +1,15 @@
+{
+  "document_id": "CASE-004-PASSPORT",
+  "case_id": "CASE-004",
+  "document_type": "passport",
+  "full_name": "Leena Kapoor",
+  "date_of_birth": "1979-07-30",
+  "document_number": "PXT400492",
+  "issue_date": "2015-05-01",
+  "expiry_date": "2025-04-30",
+  "address": null,
+  "nationality": "Republic of Meridian",
+  "scenario_flags": [
+    "expired"
+  ]
+}

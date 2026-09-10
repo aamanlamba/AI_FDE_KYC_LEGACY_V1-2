@@ -1,0 +1,15 @@
+{
+  "document_id": "CASE-002-NID",
+  "case_id": "CASE-002",
+  "document_type": "national_id",
+  "full_name": "Nisha Rao",
+  "date_of_birth": "1988-11-03",
+  "document_number": "MID-2109-6631",
+  "issue_date": "2020-07-05",
+  "expiry_date": "2030-07-04",
+  "address": "42 Lake View Road, Meridian City",
+  "nationality": null,
+  "scenario_flags": [
+    "noisy"
+  ]
+}

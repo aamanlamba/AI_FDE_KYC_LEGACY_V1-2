@@ -1,0 +1,11 @@
+{
+  "case_id": "CASE-006",
+  "submitted_name": "Isha Verma",
+  "submitted_dob": "1986-09-19",
+  "submitted_address": "28 Hill Park, Meridian City",
+  "scenario": "suspected_tampering",
+  "document_ids": [
+    "CASE-006-PASSPORT",
+    "CASE-006-DL"
+  ]
+}

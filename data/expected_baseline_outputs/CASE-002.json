@@ -1,0 +1,56 @@
+{
+  "case_id": "CASE-002",
+  "decision": "REVIEW",
+  "reason_codes": [
+    "MANUAL_REVIEW_REQUIRED"
+  ],
+  "documents": [
+    {
+      "document_id": "CASE-002-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "REVIEW",
+      "reason_codes": [
+        "MANUAL_REVIEW_REQUIRED"
+      ],
+      "parsed_fields": {
+        "document_type": "PASSPORT",
+        "full_name": "Nisha Rao",
+        "date_of_birth": "1988-11-03",
+        "document_number": "PXT200267",
+        "issue_date": "2021-08-18",
+        "expiry_date": "2031-08-17",
+        "nationality": "Republic of Meridian"
+      },
+      "completeness": 1.0,
+      "warnings": [
+        "DEGRADED_OCR_QUALITY",
+        "OCR_QUALITY_DEGRADED"
+      ],
+      "source": "deterministic_sidecar_ocr"
+    },
+    {
+      "document_id": "CASE-002-NID",
+      "document_type": "NATIONAL_ID",
+      "decision": "REVIEW",
+      "reason_codes": [
+        "MANUAL_REVIEW_REQUIRED"
+      ],
+      "parsed_fields": {
+        "document_type": "NATIONAL_ID",
+        "full_name": "Nisha Rao",
+        "date_of_birth": "1988-11-03",
+        "document_number": "MID-2109-6631",
+        "issue_date": "2020-07-05",
+        "expiry_date": "2030-07-04",
+        "address": "42 Lake View Road, Meridian City"
+      },
+      "completeness": 1.0,
+      "warnings": [
+        "DEGRADED_OCR_QUALITY",
+        "OCR_QUALITY_DEGRADED"
+      ],
+      "source": "deterministic_sidecar_ocr"
+    }
+  ],
+  "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."
+}

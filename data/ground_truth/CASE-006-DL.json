@@ -1,0 +1,13 @@
+{
+  "document_id": "CASE-006-DL",
+  "case_id": "CASE-006",
+  "document_type": "driving_licence",
+  "full_name": "Isha Verma",
+  "date_of_birth": "1986-09-19",
+  "document_number": "MDL-550214",
+  "issue_date": "2021-06-03",
+  "expiry_date": "2031-06-02",
+  "address": "28 Hill Park, Meridian City",
+  "nationality": null,
+  "scenario_flags": []
+}

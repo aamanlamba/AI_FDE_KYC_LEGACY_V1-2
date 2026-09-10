@@ -1,0 +1,13 @@
+{
+  "document_id": "CASE-001-PASSPORT",
+  "case_id": "CASE-001",
+  "document_type": "passport",
+  "full_name": "Aarav Mehta",
+  "date_of_birth": "1991-04-12",
+  "document_number": "PXT100184",
+  "issue_date": "2023-06-01",
+  "expiry_date": "2033-05-31",
+  "address": null,
+  "nationality": "Republic of Meridian",
+  "scenario_flags": []
+}

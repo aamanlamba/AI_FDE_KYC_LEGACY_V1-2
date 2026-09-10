@@ -1,0 +1,15 @@
+{
+  "document_id": "CASE-005-NID",
+  "case_id": "CASE-005",
+  "document_type": "national_id",
+  "full_name": "Mohammad Rehman",
+  "date_of_birth": "1992-12-08",
+  "document_number": "MID-9850-3312",
+  "issue_date": "2023-02-16",
+  "expiry_date": "2033-02-15",
+  "address": "93 Market Road, Meridian City",
+  "nationality": null,
+  "scenario_flags": [
+    "ocr_error"
+  ]
+}

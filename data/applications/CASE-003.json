@@ -1,0 +1,11 @@
+{
+  "case_id": "CASE-003",
+  "submitted_name": "Vikram Sen",
+  "submitted_dob": "1995-02-21",
+  "submitted_address": "7 Orchard Lane, Meridian City",
+  "scenario": "rotated_document",
+  "document_ids": [
+    "CASE-003-DL",
+    "CASE-003-PASSPORT"
+  ]
+}

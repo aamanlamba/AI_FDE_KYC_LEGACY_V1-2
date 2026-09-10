@@ -1,0 +1,50 @@
+{
+  "case_id": "CASE-005",
+  "decision": "APPROVE",
+  "reason_codes": [
+    "BASELINE_RULES_PASSED"
+  ],
+  "documents": [
+    {
+      "document_id": "CASE-005-PASSPORT",
+      "document_type": "PASSPORT",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "parsed_fields": {
+        "document_type": "PASSPORT",
+        "full_name": "Mohammed Rahman",
+        "date_of_birth": "1992-12-08",
+        "document_number": "PXT500578",
+        "issue_date": "2024-04-09",
+        "expiry_date": "2034-04-08",
+        "nationality": "Republic of Meridian"
+      },
+      "completeness": 1.0,
+      "warnings": [],
+      "source": "deterministic_sidecar_ocr"
+    },
+    {
+      "document_id": "CASE-005-NID",
+      "document_type": "NATIONAL_ID",
+      "decision": "APPROVE",
+      "reason_codes": [
+        "BASELINE_RULES_PASSED"
+      ],
+      "parsed_fields": {
+        "document_type": "NATIONAL_ID",
+        "full_name": "Moharnmad Rehrnan",
+        "date_of_birth": "1992-12-08",
+        "document_number": "MID-9850-3312",
+        "issue_date": "2023-02-16",
+        "expiry_date": "2033-02-15",
+        "address": "93 Market Road, Meridian City"
+      },
+      "completeness": 1.0,
+      "warnings": [],
+      "source": "deterministic_sidecar_ocr"
+    }
+  ],
+  "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."
+}

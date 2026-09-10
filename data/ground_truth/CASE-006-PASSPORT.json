@@ -1,0 +1,15 @@
+{
+  "document_id": "CASE-006-PASSPORT",
+  "case_id": "CASE-006",
+  "document_type": "passport",
+  "full_name": "Isha Verma",
+  "date_of_birth": "1986-09-19",
+  "document_number": "PXT600651",
+  "issue_date": "2022-10-11",
+  "expiry_date": "2032-10-10",
+  "address": null,
+  "nationality": "Republic of Meridian",
+  "scenario_flags": [
+    "suspected_tampering"
+  ]
+}

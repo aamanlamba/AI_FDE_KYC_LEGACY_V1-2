@@ -1,0 +1,12 @@
+{
+  "case_id": "CASE-001",
+  "submitted_name": "Aarav Mehta",
+  "submitted_dob": "1991-04-12",
+  "submitted_address": "18 Cedar Avenue, Meridian City",
+  "scenario": "clean",
+  "document_ids": [
+    "CASE-001-PASSPORT",
+    "CASE-001-NID",
+    "CASE-001-DL"
+  ]
+}
