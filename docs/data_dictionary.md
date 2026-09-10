@@ -370,13 +370,28 @@ deterministic offline fallback available regardless; ground every statement in t
 supplied evidence; and never invent facts.
 
 ### New endpoints (additive; existing endpoints unchanged)
+
+**As of stage P8, every endpoint below requires an `X-API-Key` header** with a
+credential holding the `reviewer` role (workshop default: `workshop-reviewer-key`, see
+`config/security.json`; override via the `REVIEWER_API_KEYS` environment variable).
+Missing/invalid credential → `401`; valid credential without the role → `403`. See
+`docs/security/threat_model.md` §10 for why (`/v1/documents/verify` and
+`/v1/cases/{id}/verify` remain unauthenticated — a documented, deliberate scope
+boundary, not an oversight).
+
 | Method & path | Purpose |
 |---|---|
 | `POST /v1/cases/{case_id}/reviews` | Open a review (`201`), or return the existing open one if already open (`201`, idempotent-by-case); `409` if `decision != REVIEW` |
 | `GET /v1/reviews` | List reviews, optional `?status=` filter |
 | `GET /v1/reviews/{review_id}` | Get one review (`404` if unknown) |
 | `GET /v1/reviews/{review_id}/history` | The full, ordered audit trail |
-| `POST /v1/reviews/{review_id}/transitions` | Apply an analyst action (`409` on an invalid transition) |
+| `POST /v1/reviews/{review_id}/transitions` | Apply an analyst action (`409` on an invalid transition; `429` if the rate limit is exceeded — 20 transitions/60s per credential) |
+
+Example:
+```bash
+curl -X POST http://127.0.0.1:8000/v1/cases/CASE-005/reviews \
+  -H "X-API-Key: workshop-reviewer-key"
+```
 
 ## Evaluation harness (`eval/`, added in stage P7)
 
@@ -439,3 +454,24 @@ false acceptance on labeled fraud/tamper/contradiction cases; ≥90% decision ac
 the labeled set; ≥95% document field exact-match on the real dataset. `tests/test_eval_harness.py`
 proves the gate mechanism itself is sound (each gate is shown to actually fail against
 a deliberately-broken synthetic report, not just always pass).
+
+## Security & privacy hardening (`src/security/`, added in stage P8)
+
+Full threat model: `docs/security/threat_model.md`. Full data-flow/retention
+inventory: `docs/security/privacy_data_flow.md`. Summary of the new package:
+
+| Module | Purpose |
+|---|---|
+| `identifiers.py` | Allowlist identifier validation (replaces the P0 denylist in `src/repository.py:safe_id`) |
+| `redaction.py` | `sanitize_for_display` (strips control chars/caps length before document content reaches a narrative string), `redact_partial`/`mask_tail` (partial masking for lower-trust display contexts) |
+| `auth.py` | `Authorizer` interface + `StaticWorkshopAuthorizer` (deterministic, config/env-driven); gates every `/v1/reviews*` endpoint |
+| `limits.py` | `RateLimiter` (in-memory, fixed-window); gates `POST /v1/reviews/{id}/transitions` |
+| `logging_utils.py` | `log_operational_event` — an allowlist-of-field-**names** logging helper |
+| `errors.py` | `AuthenticationError` (401), `AuthorizationError` (403), `RateLimitExceededError` (429) |
+
+Also in this stage: a centralized `Exception` handler in `src/app.py` returns a
+generic, sanitized `500` to callers while logging full detail server-side with the
+request's correlation ID; `model_config = ConfigDict(extra='forbid')` on both
+user-facing request models (`VerifyDocumentRequest`, `ReviewTransitionRequest`); a
+1 MB file-read bound in `src/repository.py`; and `ReviewStore.purge_review()`, the
+retention/deletion primitive documented in `docs/security/privacy_data_flow.md` §4.

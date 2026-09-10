@@ -45,16 +45,37 @@ The following issues are known in the inherited system. They describe the curren
   Case *verification* itself (`/v1/cases/{id}/verify`) remains fully stateless/computed
   fresh on every call, as it has since P0 — there is still no durable store of
   verification decisions themselves, only of review-workflow actions taken on them.
-- Logging is basic and does not provide distributed transaction tracing.
+- Logging is basic and does not provide distributed transaction tracing. **PII exposure
+  addressed as of stage P8**: `src/security/logging_utils.py` provides an
+  allowlist-of-field-names logging helper, and a direct test
+  (`tests/test_security.py::test_request_logging_never_includes_identity_attribute_values`)
+  confirms no identity attribute appears in captured log output. Distributed tracing
+  itself remains absent.
 - No application metrics endpoint or formal SLO monitoring exists.
-- No rate limiting, authentication, authorization or tenant isolation is implemented in the training service.
+- No rate limiting, authentication, authorization or tenant isolation is implemented in
+  the training service. **Partially addressed as of stage P8**: `src/security/auth.py`
+  (deterministic, config/env-driven `Authorizer`) and `src/security/limits.py`
+  (in-memory rate limiter) now gate every `/v1/reviews*` endpoint. `/v1/documents/verify`
+  and `/v1/cases/{id}/verify` remain open — a documented, deliberate scope boundary
+  (see `docs/security/threat_model.md` §10), not an oversight. Tenant isolation is not
+  addressed at all.
 - No cryptographic document-signature or checksum verification exists. As of stage P3,
   this is now honestly disclosed rather than silently absent: `src/evidence_validation/`
   reports a `CHECKSUM-SIGNATURE` rule with status `NOT_IMPLEMENTED` (a status distinct
   from `PASS`/`FAIL`, reserved for capability-boundary disclosure) rather than fabricating
   a result.
 - Privacy retention and deletion controls are not implemented in application code.
-- Error handling is uneven across parsing and validation paths.
+  **Partially addressed as of stage P8**: `ReviewStore.purge_review()` is a tested,
+  working hard-delete primitive for the only durable PII-bearing store in this system
+  (`var/review_store.sqlite3`, introduced in P6). No scheduled/automatic purge job and
+  no API endpoint expose it yet — see `docs/security/privacy_data_flow.md` §4 for the
+  full retention/deletion boundary and why this split was made deliberately.
+- Error handling is uneven across parsing and validation paths. **Partially addressed
+  as of stage P8**: a centralized `Exception` handler in `src/app.py` now catches any
+  exception not matched by a more specific handler, logs it in full server-side with
+  the request's correlation ID, and returns a generic, sanitized `500` to the caller —
+  never a stack trace or internal detail. Per-path error handling elsewhere is otherwise
+  unchanged.
 - Several business decisions are encoded directly in Python conditionals. As of stage
   P5, the case-level decision policy (`src/decision_policy/`) is still plain Python
   conditionals by deliberate choice (requirement: avoid opaque weighted scoring) — but

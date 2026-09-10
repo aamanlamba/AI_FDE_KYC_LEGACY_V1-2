@@ -67,9 +67,12 @@ curl -X POST http://127.0.0.1:8000/v1/cases/CASE-005/verify
 ```
 
 Open a human review for a case whose decision is REVIEW (stage P6; see
-`docs/data_dictionary.md` for the full review-workflow contract):
+`docs/data_dictionary.md` for the full review-workflow contract). As of stage P8 this
+requires an authenticated reviewer credential (workshop default shown below; see
+`docs/security/threat_model.md`):
 ```bash
-curl -X POST http://127.0.0.1:8000/v1/cases/CASE-005/reviews
+curl -X POST http://127.0.0.1:8000/v1/cases/CASE-005/reviews \
+  -H "X-API-Key: workshop-reviewer-key"
 ```
 
 ## Run checks

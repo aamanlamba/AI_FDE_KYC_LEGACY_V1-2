@@ -21,13 +21,16 @@ def free_port() -> int:
         return int(sock.getsockname()[1])
 
 
-def request(url: str, *, method: str = "GET", body: dict | None = None) -> tuple[int, dict]:
+REVIEWER_HEADERS = {"X-API-Key": "workshop-reviewer-key"}
+
+
+def request(url: str, *, method: str = "GET", body: dict | None = None, headers: dict | None = None) -> tuple[int, dict]:
     data = None
-    headers = {}
+    request_headers = dict(headers or {})
     if body is not None:
         data = json.dumps(body).encode("utf-8")
-        headers["Content-Type"] = "application/json"
-    req = urllib.request.Request(url, data=data, headers=headers, method=method)
+        request_headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, data=data, headers=request_headers, method=method)
     try:
         with urllib.request.urlopen(req, timeout=3) as response:
             return response.status, json.loads(response.read().decode("utf-8"))
@@ -91,24 +94,29 @@ try:
     if status != 200 or case.get("decision") != "REJECT":
         raise RuntimeError(f"unexpected case verification response: {case}")
 
-    status, review = request(base + "/v1/cases/CASE-002/reviews", method="POST")
+    status, unauthenticated = request(base + "/v1/cases/CASE-002/reviews", method="POST")
+    if status != 401:
+        raise RuntimeError(f"expected 401 opening a review without a credential, got {status}: {unauthenticated}")
+
+    status, review = request(base + "/v1/cases/CASE-002/reviews", method="POST", headers=REVIEWER_HEADERS)
     if status != 201 or review.get("status") != "OPEN":
         raise RuntimeError(f"unexpected review-open response: status={status} body={review}")
     review_id = review["review_id"]
 
-    status, conflict = request(base + "/v1/cases/CASE-001/reviews", method="POST")
+    status, conflict = request(base + "/v1/cases/CASE-001/reviews", method="POST", headers=REVIEWER_HEADERS)
     if status != 409:
         raise RuntimeError(f"expected 409 opening a review for a non-REVIEW case, got {status}: {conflict}")
 
     status, in_review = request(
         base + f"/v1/reviews/{review_id}/transitions",
         method="POST",
+        headers=REVIEWER_HEADERS,
         body={"new_status": "IN_REVIEW", "analyst_action": "start", "rationale": "smoke test pickup"},
     )
     if status != 200 or in_review.get("status") != "IN_REVIEW":
         raise RuntimeError(f"unexpected transition response: status={status} body={in_review}")
 
-    status, history = request(base + f"/v1/reviews/{review_id}/history")
+    status, history = request(base + f"/v1/reviews/{review_id}/history", headers=REVIEWER_HEADERS)
     if status != 200 or len(history) != 1:
         raise RuntimeError(f"unexpected review history: status={status} body={history}")
 

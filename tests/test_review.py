@@ -18,11 +18,20 @@ def store():
     return ReviewStore(":memory:")
 
 
+REVIEWER_AUTH_HEADERS = {"X-API-Key": "workshop-reviewer-key"}
+
+
 @pytest.fixture
 def client(store):
+    # As of P8, review endpoints require an authenticated 'reviewer' credential
+    # (see docs/security/threat_model.md). This fixture represents an authenticated
+    # reviewer's client -- unauthenticated/unauthorized access is covered separately
+    # and explicitly in tests/test_security.py.
     appmod.app.dependency_overrides[appmod.review_store_dependency] = lambda: store
     try:
-        yield TestClient(appmod.app)
+        test_client = TestClient(appmod.app)
+        test_client.headers.update(REVIEWER_AUTH_HEADERS)
+        yield test_client
     finally:
         appmod.app.dependency_overrides.clear()
 

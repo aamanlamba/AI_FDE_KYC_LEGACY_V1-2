@@ -136,3 +136,14 @@ P0 finding this closes.
     and adversarial-sensitivity checks, and release gates that fail the run (non-zero
     exit) if any regress. It is independent of and does not modify `src/` or the
     pytest regression suite. See `docs/data_dictionary.md`.
+11. **As of stage P8**: security/privacy hardening at the identity-evidence boundaries,
+    not a documentation-only pass. `src/security/` (allowlist identifier validation,
+    document-content sanitization, an `Authorizer` abstraction with a deterministic
+    workshop implementation, an in-memory rate limiter, an allowlist-field-name logging
+    helper) is wired into `src/repository.py`, `src/app.py`, `src/models.py`,
+    `src/review/`. Every `/v1/reviews*` endpoint now requires an authenticated
+    `reviewer` credential; `/v1/documents/verify` and `/v1/cases/{id}/verify` remain
+    open (a documented, deliberate scope boundary). A centralized exception handler
+    returns generic, sanitized errors to callers while logging full detail
+    server-side. See `docs/security/threat_model.md` and
+    `docs/security/privacy_data_flow.md`.

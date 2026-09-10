@@ -72,6 +72,10 @@ exits non-zero if a release gate fails — see `docs/data_dictionary.md`.
 - `GET /v1/cases`
 - `POST /v1/documents/verify`
 - `POST /v1/cases/{case_id}/verify`
+- `POST /v1/cases/{case_id}/reviews`, `GET /v1/reviews`, `GET /v1/reviews/{id}`,
+  `GET /v1/reviews/{id}/history`, `POST /v1/reviews/{id}/transitions` — require an
+  `X-API-Key: workshop-reviewer-key` header as of stage P8 (see
+  `docs/security/threat_model.md`)
 - `GET /docs`
 
 Example request body:

@@ -1,0 +1,6 @@
+{
+  "_comment": "Workshop-only static credentials for src.security.auth.StaticWorkshopAuthorizer. These are NOT real secrets and MUST NOT be reused in any real deployment. A real deployment overrides this entirely via the REVIEWER_API_KEYS environment variable (comma-separated) or replaces StaticWorkshopAuthorizer with an Authorizer backed by a real identity provider -- no caller of src.security.auth.authorize() needs to change either way.",
+  "reviewer_api_keys": [
+    "workshop-reviewer-key"
+  ]
+}

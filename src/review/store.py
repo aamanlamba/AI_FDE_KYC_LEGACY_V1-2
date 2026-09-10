@@ -174,6 +174,21 @@ class ReviewStore:
             self._conn.commit()
         return self.get_review(review_id)
 
+    def purge_review(self, review_id: str) -> None:
+        """Hard-deletes a review and its full audit trail. This is the retention/
+        deletion primitive referenced in docs/security/privacy_data_flow.md -- the
+        review workflow durably stores identity attributes (evidence_summary,
+        discrepancies, fraud_signals may embed names) to disk, so a deletion path must
+        exist. No API endpoint exposes this in the current stage (deliberately
+        documented as a residual scope boundary, not silently omitted); it is exercised
+        directly today by an operator/script, or by a future admin-authenticated
+        endpoint built on this same primitive.
+        """
+        with self._lock:
+            self._conn.execute("DELETE FROM review_audit_log WHERE review_id = ?", (review_id,))
+            self._conn.execute("DELETE FROM review_cases WHERE review_id = ?", (review_id,))
+            self._conn.commit()
+
     def close(self) -> None:
         with self._lock:
             self._conn.close()

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ReviewStatus(str, Enum):
@@ -72,6 +72,7 @@ class ReviewAuditEntry(BaseModel):
 
 
 class ReviewTransitionRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     new_status: ReviewStatus
     analyst_action: str = Field(min_length=1, max_length=200)
     rationale: str = Field(min_length=1, max_length=2000)
