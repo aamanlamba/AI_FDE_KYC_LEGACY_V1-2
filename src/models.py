@@ -1,6 +1,8 @@
 from typing import Literal, Any
 from pydantic import BaseModel, Field
 
+from .document_intelligence import DocumentEvidence
+
 Decision = Literal["APPROVE","REVIEW","REJECT"]
 
 class VerifyDocumentRequest(BaseModel):
@@ -15,6 +17,7 @@ class DocumentResult(BaseModel):
     completeness: float
     warnings: list[str]
     source: str = "deterministic_sidecar_ocr"
+    evidence: DocumentEvidence
 
 class CaseResult(BaseModel):
     case_id: str

@@ -24,7 +24,65 @@
       },
       "completeness": 1.0,
       "warnings": [],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-006-PASSPORT",
+        "document_type": "passport",
+        "fields": {
+          "full_name": {
+            "value": "Isha Verma",
+            "normalized_value": "Isha Verma",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-PASSPORT.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1986-09-19",
+            "normalized_value": "1986-09-19",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-PASSPORT.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "PXT600651",
+            "normalized_value": "PXT600651",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-PASSPORT.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2022-10-11",
+            "normalized_value": "2022-10-11",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-PASSPORT.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2032-10-10",
+            "normalized_value": "2032-10-10",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-PASSPORT.txt#field=expiry_date",
+            "warnings": []
+          },
+          "nationality": {
+            "value": "Republic of Meridian",
+            "normalized_value": "Republic of Meridian",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-PASSPORT.txt#field=nationality",
+            "warnings": []
+          }
+        },
+        "quality": "normal",
+        "extraction_warnings": [],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-006-PASSPORT.txt"
+      }
     },
     {
       "document_id": "CASE-006-DL",
@@ -44,7 +102,65 @@
       },
       "completeness": 1.0,
       "warnings": [],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-006-DL",
+        "document_type": "driving_licence",
+        "fields": {
+          "full_name": {
+            "value": "Isha Verma",
+            "normalized_value": "Isha Verma",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-DL.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1986-09-19",
+            "normalized_value": "1986-09-19",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-DL.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "MDL-550214",
+            "normalized_value": "MDL-550214",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-DL.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2021-06-03",
+            "normalized_value": "2021-06-03",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-DL.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2031-06-02",
+            "normalized_value": "2031-06-02",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-DL.txt#field=expiry_date",
+            "warnings": []
+          },
+          "address": {
+            "value": "28 Hill Park, Meridian City",
+            "normalized_value": "28 Hill Park, Meridian City",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-006-DL.txt#field=address",
+            "warnings": []
+          }
+        },
+        "quality": "normal",
+        "extraction_warnings": [],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-006-DL.txt"
+      }
     }
   ],
   "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."

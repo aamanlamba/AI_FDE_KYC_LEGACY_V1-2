@@ -23,7 +23,65 @@
       },
       "completeness": 1.0,
       "warnings": [],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-005-PASSPORT",
+        "document_type": "passport",
+        "fields": {
+          "full_name": {
+            "value": "Mohammed Rahman",
+            "normalized_value": "Mohammed Rahman",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-PASSPORT.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1992-12-08",
+            "normalized_value": "1992-12-08",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-PASSPORT.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "PXT500578",
+            "normalized_value": "PXT500578",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-PASSPORT.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2024-04-09",
+            "normalized_value": "2024-04-09",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-PASSPORT.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2034-04-08",
+            "normalized_value": "2034-04-08",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-PASSPORT.txt#field=expiry_date",
+            "warnings": []
+          },
+          "nationality": {
+            "value": "Republic of Meridian",
+            "normalized_value": "Republic of Meridian",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-PASSPORT.txt#field=nationality",
+            "warnings": []
+          }
+        },
+        "quality": "normal",
+        "extraction_warnings": [],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-005-PASSPORT.txt"
+      }
     },
     {
       "document_id": "CASE-005-NID",
@@ -43,7 +101,65 @@
       },
       "completeness": 1.0,
       "warnings": [],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-005-NID",
+        "document_type": "national_id",
+        "fields": {
+          "full_name": {
+            "value": "Moharnmad Rehrnan",
+            "normalized_value": "Moharnmad Rehrnan",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-NID.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1992-12-08",
+            "normalized_value": "1992-12-08",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-NID.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "MID-9850-3312",
+            "normalized_value": "MID-9850-3312",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-NID.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2023-02-16",
+            "normalized_value": "2023-02-16",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-NID.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2033-02-15",
+            "normalized_value": "2033-02-15",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-NID.txt#field=expiry_date",
+            "warnings": []
+          },
+          "address": {
+            "value": "93 Market Road, Meridian City",
+            "normalized_value": "93 Market Road, Meridian City",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-005-NID.txt#field=address",
+            "warnings": []
+          }
+        },
+        "quality": "normal",
+        "extraction_warnings": [],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-005-NID.txt"
+      }
     }
   ],
   "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."

@@ -23,7 +23,65 @@
       },
       "completeness": 1.0,
       "warnings": [],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-001-PASSPORT",
+        "document_type": "passport",
+        "fields": {
+          "full_name": {
+            "value": "Aarav Mehta",
+            "normalized_value": "Aarav Mehta",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-PASSPORT.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1991-04-12",
+            "normalized_value": "1991-04-12",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-PASSPORT.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "PXT100184",
+            "normalized_value": "PXT100184",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-PASSPORT.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2023-06-01",
+            "normalized_value": "2023-06-01",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-PASSPORT.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2033-05-31",
+            "normalized_value": "2033-05-31",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-PASSPORT.txt#field=expiry_date",
+            "warnings": []
+          },
+          "nationality": {
+            "value": "Republic of Meridian",
+            "normalized_value": "Republic of Meridian",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-PASSPORT.txt#field=nationality",
+            "warnings": []
+          }
+        },
+        "quality": "normal",
+        "extraction_warnings": [],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-001-PASSPORT.txt"
+      }
     },
     {
       "document_id": "CASE-001-NID",
@@ -43,7 +101,65 @@
       },
       "completeness": 1.0,
       "warnings": [],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-001-NID",
+        "document_type": "national_id",
+        "fields": {
+          "full_name": {
+            "value": "Aarav Mehta",
+            "normalized_value": "Aarav Mehta",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-NID.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1991-04-12",
+            "normalized_value": "1991-04-12",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-NID.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "MID-8842-1109",
+            "normalized_value": "MID-8842-1109",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-NID.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2022-02-14",
+            "normalized_value": "2022-02-14",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-NID.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2032-02-13",
+            "normalized_value": "2032-02-13",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-NID.txt#field=expiry_date",
+            "warnings": []
+          },
+          "address": {
+            "value": "18 Cedar Avenue, Meridian City",
+            "normalized_value": "18 Cedar Avenue, Meridian City",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-NID.txt#field=address",
+            "warnings": []
+          }
+        },
+        "quality": "normal",
+        "extraction_warnings": [],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-001-NID.txt"
+      }
     },
     {
       "document_id": "CASE-001-DL",
@@ -63,7 +179,65 @@
       },
       "completeness": 1.0,
       "warnings": [],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-001-DL",
+        "document_type": "driving_licence",
+        "fields": {
+          "full_name": {
+            "value": "Aarav Mehta",
+            "normalized_value": "Aarav Mehta",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-DL.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1991-04-12",
+            "normalized_value": "1991-04-12",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-DL.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "MDL-771904",
+            "normalized_value": "MDL-771904",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-DL.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2024-01-10",
+            "normalized_value": "2024-01-10",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-DL.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2034-01-09",
+            "normalized_value": "2034-01-09",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-DL.txt#field=expiry_date",
+            "warnings": []
+          },
+          "address": {
+            "value": "18 Cedar Avenue, Meridian City",
+            "normalized_value": "18 Cedar Avenue, Meridian City",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-001-DL.txt#field=address",
+            "warnings": []
+          }
+        },
+        "quality": "normal",
+        "extraction_warnings": [],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-001-DL.txt"
+      }
     }
   ],
   "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."

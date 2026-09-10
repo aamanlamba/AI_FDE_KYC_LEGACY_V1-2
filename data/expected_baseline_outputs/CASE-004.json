@@ -24,7 +24,65 @@
       },
       "completeness": 1.0,
       "warnings": [],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-004-PASSPORT",
+        "document_type": "passport",
+        "fields": {
+          "full_name": {
+            "value": "Leena Kapoor",
+            "normalized_value": "Leena Kapoor",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-PASSPORT.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1979-07-30",
+            "normalized_value": "1979-07-30",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-PASSPORT.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "PXT400492",
+            "normalized_value": "PXT400492",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-PASSPORT.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2015-05-01",
+            "normalized_value": "2015-05-01",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-PASSPORT.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2025-04-30",
+            "normalized_value": "2025-04-30",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-PASSPORT.txt#field=expiry_date",
+            "warnings": []
+          },
+          "nationality": {
+            "value": "Republic of Meridian",
+            "normalized_value": "Republic of Meridian",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-PASSPORT.txt#field=nationality",
+            "warnings": []
+          }
+        },
+        "quality": "normal",
+        "extraction_warnings": [],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-004-PASSPORT.txt"
+      }
     },
     {
       "document_id": "CASE-004-NID",
@@ -44,7 +102,65 @@
       },
       "completeness": 1.0,
       "warnings": [],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-004-NID",
+        "document_type": "national_id",
+        "fields": {
+          "full_name": {
+            "value": "Leena Kapoor",
+            "normalized_value": "Leena Kapoor",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-NID.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1979-07-30",
+            "normalized_value": "1979-07-30",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-NID.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "MID-4431-7710",
+            "normalized_value": "MID-4431-7710",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-NID.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2024-01-01",
+            "normalized_value": "2024-01-01",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-NID.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2034-01-01",
+            "normalized_value": "2034-01-01",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-NID.txt#field=expiry_date",
+            "warnings": []
+          },
+          "address": {
+            "value": "11 Sunrise Street, Meridian City",
+            "normalized_value": "11 Sunrise Street, Meridian City",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-004-NID.txt#field=address",
+            "warnings": []
+          }
+        },
+        "quality": "normal",
+        "extraction_warnings": [],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-004-NID.txt"
+      }
     }
   ],
   "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."

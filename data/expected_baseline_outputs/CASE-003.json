@@ -27,7 +27,68 @@
         "ROTATED_CAPTURE",
         "ROTATED_DOCUMENT"
       ],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-003-DL",
+        "document_type": "driving_licence",
+        "fields": {
+          "full_name": {
+            "value": "Vikram Sen",
+            "normalized_value": "Vikram Sen",
+            "confidence": 0.8,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-DL.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1995-02-21",
+            "normalized_value": "1995-02-21",
+            "confidence": 0.8,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-DL.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "MDL-307745",
+            "normalized_value": "MDL-307745",
+            "confidence": 0.8,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-DL.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2022-03-15",
+            "normalized_value": "2022-03-15",
+            "confidence": 0.8,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-DL.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2032-03-14",
+            "normalized_value": "2032-03-14",
+            "confidence": 0.8,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-DL.txt#field=expiry_date",
+            "warnings": []
+          },
+          "address": {
+            "value": "7 Orchard Lane, Meridian City",
+            "normalized_value": "7 Orchard Lane, Meridian City",
+            "confidence": 0.8,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-DL.txt#field=address",
+            "warnings": []
+          }
+        },
+        "quality": "rotated",
+        "extraction_warnings": [
+          "ROTATED_CAPTURE",
+          "CAPTURE_ORIENTATION_ROTATED"
+        ],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-003-DL.txt"
+      }
     },
     {
       "document_id": "CASE-003-PASSPORT",
@@ -47,7 +108,65 @@
       },
       "completeness": 1.0,
       "warnings": [],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-003-PASSPORT",
+        "document_type": "passport",
+        "fields": {
+          "full_name": {
+            "value": "Vikram Sen",
+            "normalized_value": "Vikram Sen",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1995-02-21",
+            "normalized_value": "1995-02-21",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "PXT300385",
+            "normalized_value": "PXT300385",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2020-09-20",
+            "normalized_value": "2020-09-20",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2030-09-19",
+            "normalized_value": "2030-09-19",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=expiry_date",
+            "warnings": []
+          },
+          "nationality": {
+            "value": "Republic of Meridian",
+            "normalized_value": "Republic of Meridian",
+            "confidence": 0.97,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=nationality",
+            "warnings": []
+          }
+        },
+        "quality": "normal",
+        "extraction_warnings": [],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-003-PASSPORT.txt"
+      }
     }
   ],
   "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."

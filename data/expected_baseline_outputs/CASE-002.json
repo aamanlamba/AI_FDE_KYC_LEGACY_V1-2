@@ -26,7 +26,68 @@
         "DEGRADED_OCR_QUALITY",
         "OCR_QUALITY_DEGRADED"
       ],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-002-PASSPORT",
+        "document_type": "passport",
+        "fields": {
+          "full_name": {
+            "value": "Nisha Rao",
+            "normalized_value": "Nisha Rao",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-PASSPORT.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1988-11-03",
+            "normalized_value": "1988-11-03",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-PASSPORT.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "PXT200267",
+            "normalized_value": "PXT200267",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-PASSPORT.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2021-08-18",
+            "normalized_value": "2021-08-18",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-PASSPORT.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2031-08-17",
+            "normalized_value": "2031-08-17",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-PASSPORT.txt#field=expiry_date",
+            "warnings": []
+          },
+          "nationality": {
+            "value": "Republic of Meridian",
+            "normalized_value": "Republic of Meridian",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-PASSPORT.txt#field=nationality",
+            "warnings": []
+          }
+        },
+        "quality": "degraded",
+        "extraction_warnings": [
+          "DEGRADED_OCR_QUALITY",
+          "OCR_QUALITY_DEGRADED"
+        ],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-002-PASSPORT.txt"
+      }
     },
     {
       "document_id": "CASE-002-NID",
@@ -49,7 +110,68 @@
         "DEGRADED_OCR_QUALITY",
         "OCR_QUALITY_DEGRADED"
       ],
-      "source": "deterministic_sidecar_ocr"
+      "source": "deterministic_sidecar_ocr",
+      "evidence": {
+        "document_id": "CASE-002-NID",
+        "document_type": "national_id",
+        "fields": {
+          "full_name": {
+            "value": "Nisha Rao",
+            "normalized_value": "Nisha Rao",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-NID.txt#field=full_name",
+            "warnings": []
+          },
+          "date_of_birth": {
+            "value": "1988-11-03",
+            "normalized_value": "1988-11-03",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-NID.txt#field=date_of_birth",
+            "warnings": []
+          },
+          "document_number": {
+            "value": "MID-2109-6631",
+            "normalized_value": "MID-2109-6631",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-NID.txt#field=document_number",
+            "warnings": []
+          },
+          "issue_date": {
+            "value": "2020-07-05",
+            "normalized_value": "2020-07-05",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-NID.txt#field=issue_date",
+            "warnings": []
+          },
+          "expiry_date": {
+            "value": "2030-07-04",
+            "normalized_value": "2030-07-04",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-NID.txt#field=expiry_date",
+            "warnings": []
+          },
+          "address": {
+            "value": "42 Lake View Road, Meridian City",
+            "normalized_value": "42 Lake View Road, Meridian City",
+            "confidence": 0.75,
+            "source": "deterministic_sidecar_ocr",
+            "provenance": "data/sidecar_ocr/CASE-002-NID.txt#field=address",
+            "warnings": []
+          }
+        },
+        "quality": "degraded",
+        "extraction_warnings": [
+          "DEGRADED_OCR_QUALITY",
+          "OCR_QUALITY_DEGRADED"
+        ],
+        "provider": "deterministic_sidecar_ocr",
+        "evidence_reference": "data/sidecar_ocr/CASE-002-NID.txt"
+      }
     }
   ],
   "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."
