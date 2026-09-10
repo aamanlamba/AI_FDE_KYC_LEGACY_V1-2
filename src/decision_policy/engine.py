@@ -1,5 +1,3 @@
-from ..evidence_validation.models import ValidationStatus
-from ..identity_resolution import MatchStatus
 from ..policy import Decision
 from .factors import derive_risk_factors
 from .models import EvidenceBundle, RiskAssessment, RiskFactor, RiskFactorCategory

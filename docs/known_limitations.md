@@ -99,6 +99,19 @@ The following issues are known in the inherited system. They describe the curren
   `supported_document_types` and `min_field_completeness_for_approve` from this file
   (falling back to the historical hard-coded values if it is absent), and both
   `src/rules.py` and `src/evidence_validation/` now consume those config-sourced values.
-  Document-number format regexes (`src/rules.py:PATTERNS`) remain code-level structural
-  constants, not config — they describe the shape of a document format, not a business
-  policy threshold, so externalizing them was judged out of scope for this stage.
+  Document-number format regexes (`src/policy.py:PATTERNS`, moved from `src/rules.py`
+  in stage P10 — see `docs/architecture/adr/ADR-005-shared-domain-constants.md`)
+  remain code-level structural constants, not config — they describe the shape of a
+  document format, not a business policy threshold, so externalizing them was judged
+  out of scope.
+- **As of stage P10**: an architectural modernization pass reviewed all of P1-P9's
+  accumulated code for coupling and circular dependencies (an automated AST-based
+  import-graph check, not just inspection — `tests/test_architecture.py`), found and
+  fixed one real layering violation (ADR-005) and one real concurrency bug (an
+  unbounded memory leak in `src/observability/tracing.py`'s span-stack dict), added
+  provider abstractions for persistence and two new external-integration seams
+  (identity verification, fraud services — deliberately not wired into any decision
+  path), added graceful startup/shutdown and an idempotency-key mechanism, hardened
+  Docker packaging (non-root user, healthcheck), added a CI pipeline, and fixed 6 real
+  CVEs found by `pip-audit` (ADR-007). See `docs/architecture/overview.md` for what
+  was changed and, explicitly, what was deliberately left alone.

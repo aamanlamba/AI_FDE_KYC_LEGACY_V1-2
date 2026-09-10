@@ -1,7 +1,7 @@
 from datetime import date
 
 from src.document_intelligence import DocumentEvidence, DocumentQuality, DocumentType, EvidenceField
-from src.evidence_validation import ValidationStatus, validate_case, validate_document
+from src.evidence_validation import ValidationStatus, validate_document
 from src.evidence_validation.checks import (
     check_checksum_signature,
     check_date_format,

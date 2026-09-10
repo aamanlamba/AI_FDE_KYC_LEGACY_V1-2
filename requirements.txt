@@ -1,6 +1,12 @@
-fastapi==0.128.2
-uvicorn[standard]==0.48.0
+# fastapi/uvicorn/pytest bumped in stage P10 after `pip-audit` found 6 known CVEs in
+# the previously-pinned versions (5 in the transitive starlette<0.51 dependency
+# fastapi==0.128.2 forced, 1 in pytest==9.0.2) -- see docs/architecture/adr/ for the
+# record. starlette is now pinned directly (it is what actually carried the
+# vulnerabilities) rather than left as an unpinned transitive dependency.
+fastapi==0.141.1
+starlette==1.6.0
+uvicorn[standard]==0.52.4
 pydantic==2.13.4
 pillow==12.3.0
 httpx==0.28.1
-pytest==9.0.2
+pytest==9.1.1

@@ -108,8 +108,6 @@ def _build_adversarial_empty_case():
 
 
 def build_eval_cases() -> list[EvalCase]:
-    ground_truth_fields = ["full_name", "date_of_birth", "document_number", "issue_date", "expiry_date", "address", "nationality"]
-
     cases = [
         EvalCase(
             case_id="EVAL-GOLDEN-CASE-001", category="golden",

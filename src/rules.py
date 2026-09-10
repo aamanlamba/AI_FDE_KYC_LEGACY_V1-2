@@ -1,16 +1,12 @@
 from datetime import date
-import re
 
-from .policy import MANDATORY_FIELDS, MIN_FIELD_COMPLETENESS_FOR_APPROVE
+from .policy import MANDATORY_FIELDS, MIN_FIELD_COMPLETENESS_FOR_APPROVE, PATTERNS, TAMPER_MARKER
 
 REFERENCE_DATE=date(2026,9,9)  # frozen for reproducible workshop results
 MANDATORY=MANDATORY_FIELDS  # sourced from config/baseline.json when present (see src/policy.py)
-TAMPER_MARKER='ALTERED_TEXT_REGION_DETECTED'  # synthetic test-fixture marker; see src/fraud_signals/
-PATTERNS={
-'passport': re.compile(r'^PXT\d{6}$'),
-'national_id': re.compile(r'^MID-\d{4}-\d{4}$'),
-'driving_licence': re.compile(r'^MDL-\d{6}$'),
-}
+# PATTERNS and TAMPER_MARKER moved to src/policy.py in stage P10 (they are shared
+# domain constants, not decisioning-owned) -- re-exported here for backward
+# compatibility with any existing `from .rules import PATTERNS` / `TAMPER_MARKER`.
 
 def completeness(fields: dict) -> float:
     return round(sum(bool(fields.get(k)) for k in MANDATORY)/len(MANDATORY),3)

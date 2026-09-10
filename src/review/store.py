@@ -2,11 +2,46 @@ import json
 import os
 import sqlite3
 import threading
+from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from pathlib import Path
 
 from .errors import InvalidTransitionError, ReviewNotFoundError
 from .models import ALLOWED_TRANSITIONS, EvidenceSummary, ReviewAuditEntry, ReviewCase, ReviewStatus
+
+
+class ReviewRepository(ABC):
+    """Persistence provider abstraction (P10 requirement 4). ReviewStore (SQLite,
+    below) is the only implementation in this repository -- appropriate for a
+    locally-runnable workshop service. A real deployment could implement this
+    interface against Postgres/DynamoDB/etc. behind the same method signatures,
+    without changing src.app or src.review.workflow, which depend only on this
+    interface's shape (structurally, via ReviewStore -- see its class docstring)."""
+
+    @abstractmethod
+    def create_review(self, review: ReviewCase) -> None: ...
+
+    @abstractmethod
+    def get_review(self, review_id: str) -> ReviewCase | None: ...
+
+    @abstractmethod
+    def find_open_review_for_case(self, case_id: str) -> ReviewCase | None: ...
+
+    @abstractmethod
+    def list_reviews(self, status: ReviewStatus | None = None) -> list[ReviewCase]: ...
+
+    @abstractmethod
+    def get_audit_log(self, review_id: str) -> list[ReviewAuditEntry]: ...
+
+    @abstractmethod
+    def apply_transition(
+        self, review_id: str, new_status: ReviewStatus, analyst_action: str,
+        rationale: str, correction: str | None = None,
+    ) -> ReviewCase: ...
+
+    @abstractmethod
+    def purge_review(self, review_id: str) -> None: ...
+
 
 _ROOT = Path(__file__).resolve().parents[2]
 # Overridable via REVIEW_DB_PATH (e.g. by scripts/smoke_server.py, to keep smoke runs
@@ -73,7 +108,7 @@ def _audit_entry_from_row(row: sqlite3.Row) -> ReviewAuditEntry:
     )
 
 
-class ReviewStore:
+class ReviewStore(ReviewRepository):
     """Durable local persistence for review cases (SQLite -- appropriate for a
     locally-runnable workshop service; no external database required).
 

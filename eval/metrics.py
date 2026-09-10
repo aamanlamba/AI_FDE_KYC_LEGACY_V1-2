@@ -7,7 +7,7 @@ import statistics
 
 from src.repository import load_ground_truth
 
-from .cases import GROUND_TRUTH_FIELDS, EvalCase
+from .cases import GROUND_TRUTH_FIELDS
 from .runner import CaseRunRecord
 
 FAR_FRR_SEMANTICS = (

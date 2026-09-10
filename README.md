@@ -83,6 +83,10 @@ python -m pytest -q
 python scripts/smoke_server.py
 python scripts/run_evaluation.py
 ```
+CI also runs lint (`ruff`) and security checks (`pip check`, `pip-audit`) — install
+`requirements-dev.txt` locally to run those yourself: `ruff check src/ tests/ eval/
+scripts/` and `pip-audit -r requirements.txt`. These are CI-only tooling, never
+installed in the runtime Docker image.
 `run_evaluation.py` is the AI evals / decision-quality harness (stage P7) — it is
 independent of the pytest regression suite above, measures document-intelligence,
 identity-resolution, decisioning and operational quality against a curated evaluation
@@ -94,6 +98,13 @@ Structured JSON logs, a nested trace span per pipeline stage, and `GET /metrics`
 (Prometheus-text-compatible) are built in — see `docs/operations/runbook.md` for exact
 commands to reconstruct what happened and why for any case, and
 `docs/operations/slis_slos.md` for SLI definitions and proposed SLOs.
+
+## Architecture (stage P10)
+`docs/architecture/overview.md` documents module boundaries, the provider inventory,
+dependency rules (checked by an automated import-graph test, not just described), and
+concurrency findings. `docs/architecture/adr/` records the reasoning behind the most
+consequential design decisions across every stage. `docs/operations/deployment.md`
+covers environment variables, Docker, and process lifecycle.
 
 See `WORKSHOP_RUNBOOK.md` for Windows, Linux/macOS, Docker and troubleshooting instructions.
 

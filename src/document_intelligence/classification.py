@@ -1,4 +1,4 @@
-from ..rules import PATTERNS
+from ..policy import PATTERNS
 from .models import DocumentType
 
 _DECLARED_MAP = {

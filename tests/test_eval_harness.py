@@ -5,7 +5,6 @@ tests -- this file adds to that suite rather than replacing anything in it)."""
 
 import json
 
-import pytest
 
 from eval.cases import build_eval_cases
 from eval.gates import evaluate_gates

@@ -7,12 +7,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = {
-    "fastapi": "0.128.2",
-    "uvicorn": "0.48.0",
+    "fastapi": "0.141.1",
+    "uvicorn": "0.52.4",
     "pydantic": "2.13.4",
     "PIL": "12.3.0",
     "httpx": "0.28.1",
-    "pytest": "9.0.2",
+    "pytest": "9.1.1",
 }
 
 

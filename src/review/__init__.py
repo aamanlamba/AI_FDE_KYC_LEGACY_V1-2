@@ -8,7 +8,7 @@ from .models import (
     ReviewStatus,
     ReviewTransitionRequest,
 )
-from .store import ReviewStore
+from .store import ReviewRepository, ReviewStore
 from .summary import DeterministicReviewSummaryProvider, ReviewSummaryProvider
 from .workflow import open_review_case
 
@@ -30,6 +30,7 @@ __all__ = [
     "ReviewCase",
     "ReviewAuditEntry",
     "ReviewTransitionRequest",
+    "ReviewRepository",
     "ReviewStore",
     "ReviewSummaryProvider",
     "DeterministicReviewSummaryProvider",

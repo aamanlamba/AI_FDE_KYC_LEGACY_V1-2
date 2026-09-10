@@ -1,5 +1,5 @@
 from ..evidence_validation.models import Severity
-from ..rules import TAMPER_MARKER
+from ..policy import TAMPER_MARKER
 from .models import FraudCategory
 
 # Each entry: marker substring -> (category, severity, reason_code, explanation).

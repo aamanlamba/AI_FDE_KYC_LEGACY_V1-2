@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint / static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check src/ tests/ eval/ scripts/
+      - run: python -m compileall -q src eval scripts tests
+
+  test:
+    name: Tests + evals
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - run: python scripts/workshop_preflight.py
+      - run: python scripts/sanity_check.py
+      - run: python -m pytest -q
+      - run: python scripts/smoke_server.py
+      - run: python scripts/run_evaluation.py
+
+  security:
+    name: Security checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      # pip check: offline dependency-consistency check (no network beyond installing
+      # the packages above). pip-audit: queries the OSV vulnerability database -- this
+      # is CI infrastructure with network access, not the deployed application (which
+      # remains fully offline at runtime; see requirements-dev.txt's own note).
+      - run: pip check
+      - run: pip-audit -r requirements.txt
+
+  build:
+    name: Docker build
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t ai-fde-kyc:ci .

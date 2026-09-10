@@ -1,0 +1,9 @@
+# CI/development-only tooling. NOT installed in the runtime image (Dockerfile only
+# installs requirements.txt) -- this file exists so CI has lint/security tooling
+# without weakening the application's own "runs fully offline, no extra services"
+# runtime constraint (CLAUDE.md rule 7). CI infrastructure itself is not offline (it
+# needs network to check out the repo and install these), which is an accepted,
+# distinct concern from what the deployed application requires at runtime.
+-r requirements.txt
+ruff==0.14.5
+pip-audit==2.9.0

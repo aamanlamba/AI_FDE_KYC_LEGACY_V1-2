@@ -8,6 +8,7 @@ integration point (P8 requirement 11: "rate/resource-limit mechanisms or clearly
 testable integration points"), not to claim production-grade throttling.
 """
 
+import os
 import threading
 import time
 
@@ -49,4 +50,10 @@ class RateLimiter:
 
 
 # Applied to review-mutation endpoints (the concrete demonstration point; see src/app.py).
-review_transition_rate_limiter = RateLimiter(max_requests=20, window_seconds=60.0)
+# Externalized (P10 requirement 6): REVIEW_RATE_LIMIT_MAX / REVIEW_RATE_LIMIT_WINDOW_SECONDS
+# override the workshop defaults without a code change, consistent with every other
+# runtime knob in this repository (REVIEW_DB_PATH, REVIEWER_API_KEYS, LOG_LEVEL).
+review_transition_rate_limiter = RateLimiter(
+    max_requests=int(os.environ.get("REVIEW_RATE_LIMIT_MAX", "20")),
+    window_seconds=float(os.environ.get("REVIEW_RATE_LIMIT_WINDOW_SECONDS", "60.0")),
+)

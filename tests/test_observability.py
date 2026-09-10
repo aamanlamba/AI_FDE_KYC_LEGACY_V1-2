@@ -8,7 +8,6 @@ from fastapi.testclient import TestClient
 
 import src.app as appmod
 from src.observability import (
-    DecisionLineage,
     InMemorySpanExporter,
     JsonFormatter,
     bind_trace_context,
@@ -18,10 +17,9 @@ from src.observability import (
     set_default_exporter,
     start_span,
 )
-from src.observability.metrics import Counter, Histogram, MetricsRegistry
+from src.observability.metrics import MetricsRegistry
 from src.observability.tracing import ALLOWED_SPAN_ATTRIBUTE_KEYS
-from src.repository import list_cases
-from src.service import verify_case, verify_document
+from src.service import verify_case
 
 
 @pytest.fixture

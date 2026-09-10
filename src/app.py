@@ -1,5 +1,9 @@
-import logging, os, time, uuid
-from fastapi import Depends, FastAPI, Header, HTTPException, Path, Request, Response
+import logging
+import os
+import time
+import uuid
+from contextlib import asynccontextmanager
+from fastapi import Depends, FastAPI, Header, Path, Request, Response
 from fastapi.responses import JSONResponse
 from .models import VerifyDocumentRequest, DocumentResult, CaseResult
 from .service import verify_document, verify_case
@@ -26,6 +30,7 @@ from .security import (
     ROLE_REVIEWER,
     authorize,
     get_default_authorizer,
+    review_transition_idempotency_cache,
     review_transition_rate_limiter,
 )
 from .observability import bind_trace_context, configure_logging, start_span
@@ -39,7 +44,24 @@ def _identifier_path(description: str):
 
 configure_logging(level=os.getenv('LOG_LEVEL','INFO'))
 log=logging.getLogger('kyc-v1')
-app=FastAPI(title='AI FDE Brownfield KYC Repo 1.0',version='1.0.0',description='Synthetic training service; not for real identity decisions.')
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # Startup: fail fast and loudly if a core dependency is broken, rather than
+    # accepting traffic and 500ing on the first request (P10 requirement 10:
+    # graceful startup/shutdown).
+    dataset_cases=len(list_cases())
+    get_default_review_store()  # eagerly opens the SQLite connection and runs schema migration
+    log.info('startup',extra={'event':'startup','count':dataset_cases})
+    try:
+        yield
+    finally:
+        # Shutdown: close the review store's SQLite connection cleanly instead of
+        # relying on process exit / garbage collection to do it implicitly.
+        get_default_review_store().close()
+        log.info('shutdown',extra={'event':'shutdown'})
+
+app=FastAPI(title='AI FDE Brownfield KYC Repo 1.0',version='1.0.0',description='Synthetic training service; not for real identity decisions.',lifespan=lifespan)
 
 @app.middleware('http')
 async def correlation(request: Request, call_next):
@@ -194,7 +216,20 @@ def review_history(review_id: str = _identifier_path('review identifier'),
 @app.post('/v1/reviews/{review_id}/transitions',response_model=ReviewCase)
 def transition_review(req: ReviewTransitionRequest,
                        review_id: str = _identifier_path('review identifier'),
+                       idempotency_key: str | None = Header(default=None,alias='Idempotency-Key'),
                        store: ReviewStore = Depends(review_store_dependency),
                        principal: AuthPrincipal = Depends(require_reviewer)):
     review_transition_rate_limiter.check(principal.subject)
-    return store.apply_transition(review_id,req.new_status,req.analyst_action,req.rationale,req.correction)
+    # A retried request with the same Idempotency-Key (e.g. after a client-side
+    # timeout, unsure whether the first attempt landed) returns the original result
+    # rather than re-attempting the transition, which could otherwise 409 on a retry
+    # of an already-successful request (P10 requirement 10: idempotency).
+    cache_key=f'{review_id}:{idempotency_key}' if idempotency_key else None
+    if cache_key:
+        cached=review_transition_idempotency_cache.get(cache_key)
+        if cached is not None:
+            return cached
+    result=store.apply_transition(review_id,req.new_status,req.analyst_action,req.rationale,req.correction)
+    if cache_key:
+        review_transition_idempotency_cache.put(cache_key,result)
+    return result

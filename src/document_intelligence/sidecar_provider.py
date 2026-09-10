@@ -2,7 +2,7 @@ import re
 from datetime import date
 
 from ..parser import parse_legacy_ocr
-from ..rules import PATTERNS as _DOCUMENT_NUMBER_PATTERNS
+from ..policy import PATTERNS as _DOCUMENT_NUMBER_PATTERNS
 from .classification import classify_document
 from .ingestion import DocumentIngestionSource, SidecarIngestionSource
 from .models import DocumentEvidence, DocumentQuality, DocumentType, EvidenceField

@@ -11,6 +11,7 @@ raw evidence content (P9 requirement 3, extended from P8's logging discipline to
 tracing).
 """
 
+import threading
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from dataclasses import dataclass, field
@@ -92,7 +93,13 @@ class LoggingSpanExporter(SpanExporter):
 
 
 _exporter: SpanExporter = LoggingSpanExporter()
-_current_span_id: dict[str, str] = {}  # trace_id -> most recently opened span_id (this process's call stack)
+_span_stack_lock = threading.Lock()
+# trace_id -> most recently opened span_id (this process's call stack for that trace).
+# Entries are deleted (not merely set to None) once a trace's root span completes --
+# P10 concurrency review found this dict was previously never pruned, an unbounded
+# per-trace memory leak under sustained request volume (every request has a unique
+# trace_id by default; see src.observability.context).
+_current_span_id: dict[str, str] = {}
 
 
 def set_default_exporter(exporter: SpanExporter) -> SpanExporter:
@@ -116,13 +123,14 @@ def _validate_attributes(attributes: dict) -> dict:
 @contextmanager
 def start_span(name: str, **attributes):
     ctx = get_current_trace_context()
-    parent_span_id = _current_span_id.get(ctx.trace_id)
-    span = Span(
-        name=name, trace_id=ctx.trace_id, span_id=uuid4().hex[:16],
-        parent_span_id=parent_span_id, start_time=time(),
-        attributes=_validate_attributes(dict(attributes)),
-    )
-    _current_span_id[ctx.trace_id] = span.span_id
+    with _span_stack_lock:
+        parent_span_id = _current_span_id.get(ctx.trace_id)
+        span = Span(
+            name=name, trace_id=ctx.trace_id, span_id=uuid4().hex[:16],
+            parent_span_id=parent_span_id, start_time=time(),
+            attributes=_validate_attributes(dict(attributes)),
+        )
+        _current_span_id[ctx.trace_id] = span.span_id
     try:
         yield span
     except Exception:
@@ -130,5 +138,12 @@ def start_span(name: str, **attributes):
         raise
     finally:
         span.end_time = time()
-        _current_span_id[ctx.trace_id] = parent_span_id
+        with _span_stack_lock:
+            if parent_span_id is None:
+                # This was the root span for this trace -- nothing left to nest
+                # under, so drop the trace entirely rather than leaking one dict
+                # entry per trace for the life of the process.
+                _current_span_id.pop(ctx.trace_id, None)
+            else:
+                _current_span_id[ctx.trace_id] = parent_span_id
         _exporter.export(span)

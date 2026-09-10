@@ -1,8 +1,7 @@
 from datetime import date
 
 from ..document_intelligence import DocumentEvidence, DocumentQuality, DocumentType
-from ..policy import MANDATORY_FIELDS, SUPPORTED_DOCUMENT_TYPES
-from ..rules import PATTERNS
+from ..policy import MANDATORY_FIELDS, PATTERNS, SUPPORTED_DOCUMENT_TYPES
 from .models import Severity, ValidationCategory, ValidationResult, ValidationStatus
 
 RULE_VERSION = "1.0.0"
