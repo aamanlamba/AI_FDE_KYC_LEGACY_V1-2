@@ -58,9 +58,12 @@ python scripts/workshop_preflight.py
 python scripts/sanity_check.py
 pytest -q
 python scripts/smoke_server.py
+python scripts/run_evaluation.py
 ```
 
-Expected result: every command exits with status code `0`.
+Expected result: every command exits with status code `0`. `run_evaluation.py` (stage
+P7) also writes a machine-readable evaluation report to `var/eval/report.json` and
+exits non-zero if a release gate fails — see `docs/data_dictionary.md`.
 
 ## 5. Useful endpoints
 

@@ -128,3 +128,11 @@ P0 finding this closes.
    `REVIEW`-decision cases may enter this workflow. An analyst correction is recorded as
    an annotation on the audit trail, never a rewrite of the original evidence snapshot.
    See `docs/data_dictionary.md`.
+10. **As of stage P7**: the transformation from P0 through P6 now has an independent
+    evaluation harness (`eval/`, run via `python scripts/run_evaluation.py`) answering
+    "did the transformation actually improve system quality without introducing unsafe
+    regressions?" — document-intelligence, identity-resolution, decisioning and
+    operational metrics against a curated 10-category case set, metamorphic invariance
+    and adversarial-sensitivity checks, and release gates that fail the run (non-zero
+    exit) if any regress. It is independent of and does not modify `src/` or the
+    pytest regression suite. See `docs/data_dictionary.md`.

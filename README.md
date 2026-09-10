@@ -78,7 +78,13 @@ python scripts/workshop_preflight.py
 python scripts/sanity_check.py
 python -m pytest -q
 python scripts/smoke_server.py
+python scripts/run_evaluation.py
 ```
+`run_evaluation.py` is the AI evals / decision-quality harness (stage P7) — it is
+independent of the pytest regression suite above, measures document-intelligence,
+identity-resolution, decisioning and operational quality against a curated evaluation
+case set, writes a machine-readable report to `var/eval/report.json`, and exits
+non-zero if a release gate fails. See `docs/data_dictionary.md` for the full contract.
 
 See `WORKSHOP_RUNBOOK.md` for Windows, Linux/macOS, Docker and troubleshooting instructions.
 

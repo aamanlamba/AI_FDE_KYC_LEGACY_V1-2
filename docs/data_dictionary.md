@@ -377,3 +377,65 @@ supplied evidence; and never invent facts.
 | `GET /v1/reviews/{review_id}` | Get one review (`404` if unknown) |
 | `GET /v1/reviews/{review_id}/history` | The full, ordered audit trail |
 | `POST /v1/reviews/{review_id}/transitions` | Apply an analyst action (`409` on an invalid transition) |
+
+## Evaluation harness (`eval/`, added in stage P7)
+
+Independent of `tests/` (ordinary regression/unit testing, unaffected by and unaware of
+this package — P7 requirement 1). Answers "did the transformation actually improve
+system quality without introducing unsafe regressions?" by running a curated case set
+through the real pipeline (`src.service.verify_case` for repository-backed cases;
+`eval/pipeline.py`'s direct composition, mirroring `verify_case`, for synthetic ones —
+neither modifies `src/`) and computing metrics + release gates from the results.
+
+**Run it**: `python scripts/run_evaluation.py` — the single command (P7 requirement
+11). Prints a summary, writes a machine-readable report to `var/eval/report.json`
+(gitignored; P7 requirement 9), and **exits non-zero if any release gate fails** —
+suitable for CI.
+
+### Case categories (`eval/cases.py`)
+All 10 required categories (`golden`, `noisy`, `rotated`, `ocr_corrupted`, `expired`,
+`identity_variation`, `fraud_tampering`, `missing_evidence`, `contradictory_evidence`,
+`adversarial_malformed`) are represented. Categories the real 6-case/13-document
+dataset can naturally exercise wrap the corresponding repository `case_id` (full
+fidelity — goes through `src.ocr`/`src.parser`/`src.rules` too). Categories it cannot
+(`missing_evidence`, `contradictory_evidence`, `adversarial_malformed`) are small,
+explicitly-synthetic in-memory cases, never added to `data/` — `scripts/sanity_check.py`'s
+exact case/document counts are untouched by this stage.
+
+### Sample-size honesty (P7 requirements 5, 6)
+Every rate in the report carries its raw `(numerator, denominator)` and a
+`sample_size_warning` flag (true below n=30). The report's top-level
+`sample_size_disclaimer` states plainly that this is a small, hand-curated,
+deliberately adversarial-weighted case set — not a statistically representative
+sample. **FAR/FRR semantics are stated explicitly in the report itself
+(`decisioning.far_frr_semantics`) before any number is shown**: they measure agreement
+with each case's *scenario-design label* (what it was built to represent) on this small
+set, not a calibrated error rate against any real population — this repository's
+decision policy is a deterministic rule engine, not a statistical/biometric classifier.
+
+### Metrics computed (`eval/metrics.py`)
+| Component | Metrics |
+|---|---|
+| Document Intelligence | exact match, normalized match, missing-field rate, field-presence precision/recall/F1, per-field breakdown |
+| Identity Resolution | match-status accuracy (vs. each case's labeled expected `MatchStatus`), conflict-detection accuracy (vs. each case's labeled `should_have_identity_conflict`) |
+| Decisioning | decision accuracy (vs. labeled expected decision), false acceptance, false rejection, review/referral rate |
+| Operations | straight-through-processing rate (real 6-case dataset), latency (30 repeated in-process `verify_case` calls — same "not a load test" caveat as `docs/assessment/behavioural_baseline.md`), error rate (unexpected-exception count vs. cases that explicitly expect one) |
+
+### Metamorphic and adversarial checks (`eval/metamorphic.py`, requirements 7-8)
+Run against a synthetic clean baseline case (`APPROVE`), each check compares it to one
+transformed variant:
+- **Invariance** (harmless — decision must stay the same): case (upper/lower),
+  spacing, punctuation, document ordering.
+- **Adversarial sensitivity** (genuine — decision must change): DOB corruption, tamper
+  marker injection, swapping in a genuinely different person's name. This guards
+  against a harness that would trivially pass invariance checks by ignoring its input
+  entirely.
+
+### Release gates (`eval/gates.py`, requirement 10)
+Six gates, each individually justified and calibrated to what the current, correct
+system actually satisfies (verified by running the suite, not assumed): zero
+unexpected exceptions; 100% metamorphic invariance; 100% adversarial sensitivity; zero
+false acceptance on labeled fraud/tamper/contradiction cases; ≥90% decision accuracy on
+the labeled set; ≥95% document field exact-match on the real dataset. `tests/test_eval_harness.py`
+proves the gate mechanism itself is sound (each gate is shown to actually fail against
+a deliberately-broken synthetic report, not just always pass).
