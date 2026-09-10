@@ -49,9 +49,19 @@ The following issues are known in the inherited system. They describe the curren
   addressed as of stage P8**: `src/security/logging_utils.py` provides an
   allowlist-of-field-names logging helper, and a direct test
   (`tests/test_security.py::test_request_logging_never_includes_identity_attribute_values`)
-  confirms no identity attribute appears in captured log output. Distributed tracing
-  itself remains absent.
-- No application metrics endpoint or formal SLO monitoring exists.
+  confirms no identity attribute appears in captured log output. **Tracing addressed as
+  of stage P9**: `src/observability/` provides structured JSON logging and a nested
+  span per pipeline stage propagated via one trace context across every component
+  (`src/observability/context.py`, `tracing.py`) — this is a single-process,
+  in-memory-context tracing abstraction, not a distributed trace across multiple
+  services/processes (there is only one process in this repository today), and not
+  backed by a real OpenTelemetry SDK or collector.
+- No application metrics endpoint or formal SLO monitoring exists. **Addressed as of
+  stage P9**: `GET /metrics` (Prometheus-text-compatible) covers the metric set in
+  `docs/data_dictionary.md`. SLIs are defined and measured, and SLOs are separately
+  proposed (never conflated with the measured numbers), in
+  `docs/operations/slis_slos.md` — "formal" monitoring (alerting, dashboards, an actual
+  Prometheus/Grafana deployment) remains out of scope for this locally-runnable service.
 - No rate limiting, authentication, authorization or tenant isolation is implemented in
   the training service. **Partially addressed as of stage P8**: `src/security/auth.py`
   (deterministic, config/env-driven `Authorizer`) and `src/security/limits.py`

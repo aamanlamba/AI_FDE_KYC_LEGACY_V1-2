@@ -68,7 +68,9 @@ exits non-zero if a release gate fails — see `docs/data_dictionary.md`.
 ## 5. Useful endpoints
 
 - `GET /health/live`
-- `GET /health/ready`
+- `GET /health/ready` — as of stage P9, returns a `checks` object verifying meaningful
+  dependencies (dataset, review store, auth config), not just process liveness
+- `GET /metrics` — Prometheus-text-compatible metrics (stage P9)
 - `GET /v1/cases`
 - `POST /v1/documents/verify`
 - `POST /v1/cases/{case_id}/verify`
@@ -109,3 +111,10 @@ Confirm `/health/live` responds first. Corporate endpoint controls, proxies or h
 ## 7. Data safety
 
 Every identity, number and image in this repository is fabricated for training. Do not replace the synthetic dataset with real identity documents in a classroom environment.
+
+## 8. Operational diagnostics (stage P9)
+
+For "how do I reconstruct what happened for a specific case", "is the service
+healthy", or "why did a reviewer get a 401/403/409/429" — see
+`docs/operations/runbook.md` for exact, tested commands. For latency/error-rate/SLO
+questions, see `docs/operations/slis_slos.md`.

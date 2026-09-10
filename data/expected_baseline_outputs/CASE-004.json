@@ -1158,5 +1158,23 @@
       "REVIEW:validation_failure"
     ],
     "explanation": "Case CASE-004: 2 risk factor(s) found (1x document_decision, 1x validation_failure). Policy outcome: REJECT, triggered by 1 hard-stop factor(s): CASE-004-PASSPORT:DOCUMENT_REJECT: CASE-004-PASSPORT independently REJECTed by document-level rules: DOCUMENT_EXPIRED."
+  },
+  "decision_lineage": {
+    "trace_id": "baseline",
+    "case_id": "CASE-004",
+    "decision": "REJECT",
+    "policy_version": "1.0.0",
+    "component_versions": {
+      "decision_policy": "1.0.0",
+      "evidence_validation": "1.0.0",
+      "identity_resolution": "1.0.0 (fuzzy_threshold=0.75)",
+      "document_intelligence_provider": "deterministic_sidecar_ocr",
+      "fraud_forensics_provider": "deterministic_marker_forensics"
+    },
+    "risk_factor_summary": [
+      "CASE-004-PASSPORT:DOCUMENT_REJECT (document_decision, CRITICAL, hard-stop)",
+      "CASE-004-PASSPORT:EXPIRY-NOT-PAST:FAIL (validation_failure, HIGH)"
+    ],
+    "evidence_reference_count": 2
   }
 }

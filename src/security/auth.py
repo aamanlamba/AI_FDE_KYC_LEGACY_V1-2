@@ -36,6 +36,13 @@ class Authorizer(ABC):
         absent principal means (require_role turns it into AuthenticationError)."""
         raise NotImplementedError
 
+    @abstractmethod
+    def is_configured(self) -> bool:
+        """True iff at least one credential is configured. Used by /health/ready to
+        surface "every reviewer request will 401" as a readiness concern rather than
+        letting an operator discover it only when a real reviewer request fails."""
+        raise NotImplementedError
+
 
 def _load_workshop_credentials() -> dict[str, frozenset[str]]:
     """config/security.json provides the default (clearly labeled as workshop-only,
@@ -66,6 +73,9 @@ class StaticWorkshopAuthorizer(Authorizer):
         if roles is None:
             return None
         return AuthPrincipal(subject="workshop-reviewer", roles=roles)
+
+    def is_configured(self) -> bool:
+        return bool(self._credentials)
 
 
 _default_authorizer: Authorizer | None = None

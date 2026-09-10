@@ -147,3 +147,16 @@ P0 finding this closes.
     returns generic, sanitized errors to callers while logging full detail
     server-side. See `docs/security/threat_model.md` and
     `docs/security/privacy_data_flow.md`.
+12. **As of stage P9**: production-shaped observability. One trace/correlation context
+    (`src/observability/context.py`, `contextvars`-based) is bound per request and
+    propagated across every component without changing any function signature; every
+    pipeline stage in `src/service.py`/`src/review/workflow.py` emits a nested span
+    (`src/observability/tracing.py`, an OpenTelemetry-concept-compatible abstraction
+    with no OTel dependency); all logging is structured JSON
+    (`src/observability/logging_config.py`); `GET /metrics` exposes a
+    Prometheus-text-compatible counter/histogram registry; `GET /health/ready` verifies
+    meaningful dependencies (dataset, review store, auth config) instead of just "the
+    process is up"; and `CaseResult.decision_lineage` (additive) captures the trace id,
+    policy/component versions, and risk-factor summary needed to reconstruct a decision
+    without reading source code. See `docs/data_dictionary.md`,
+    `docs/operations/runbook.md`, and `docs/operations/slis_slos.md`.

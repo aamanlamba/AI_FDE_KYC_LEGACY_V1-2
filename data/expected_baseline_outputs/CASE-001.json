@@ -1670,5 +1670,20 @@
       "POLICY_APPROVED_NO_RISK_FACTORS"
     ],
     "explanation": "Case CASE-001: no risk factors were found across document decisions, identity resolution, evidence validation, or fraud signals. Policy outcome: APPROVE."
+  },
+  "decision_lineage": {
+    "trace_id": "baseline",
+    "case_id": "CASE-001",
+    "decision": "APPROVE",
+    "policy_version": "1.0.0",
+    "component_versions": {
+      "decision_policy": "1.0.0",
+      "evidence_validation": "1.0.0",
+      "identity_resolution": "1.0.0 (fuzzy_threshold=0.75)",
+      "document_intelligence_provider": "deterministic_sidecar_ocr",
+      "fraud_forensics_provider": "deterministic_marker_forensics"
+    },
+    "risk_factor_summary": [],
+    "evidence_reference_count": 0
   }
 }

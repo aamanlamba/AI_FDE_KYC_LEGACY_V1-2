@@ -475,3 +475,59 @@ request's correlation ID; `model_config = ConfigDict(extra='forbid')` on both
 user-facing request models (`VerifyDocumentRequest`, `ReviewTransitionRequest`); a
 1 MB file-read bound in `src/repository.py`; and `ReviewStore.purge_review()`, the
 retention/deletion primitive documented in `docs/security/privacy_data_flow.md` §4.
+
+## Observability & decision lineage (`src/observability/`, added in stage P9)
+
+One trace/correlation context is bound per HTTP request (`src/app.py`'s correlation
+middleware) and propagated via `contextvars` — not a function parameter — across every
+component: API → `document_intelligence` → `evidence_validation` → `identity_resolution`
+→ `fraud_signals` → `decision_policy` → `review`. Every pipeline stage in
+`src/service.py`/`src/review/workflow.py` opens a span (`src/observability/tracing.py`)
+that nests correctly under the request's root span. Full local diagnostic procedures
+using this: `docs/operations/runbook.md`. SLI definitions and proposed (not measured)
+SLOs: `docs/operations/slis_slos.md`.
+
+| Module | Purpose |
+|---|---|
+| `context.py` | `TraceContext` (trace_id, correlation_id) propagated via `contextvars`; `bind_trace_context()`, `get_current_trace_context()` |
+| `tracing.py` | `Span`/`SpanExporter` abstraction using OpenTelemetry's own core concepts (trace_id, span_id, parent_span_id) without the dependency; `LoggingSpanExporter` (default) emits one structured log line per span; `InMemorySpanExporter` for tests |
+| `logging_config.py` | JSON structured log formatter; injects the current trace context into every log line automatically |
+| `metrics.py` | Dependency-free `Counter`/`Histogram` registry rendered in Prometheus-text-exposition format at `GET /metrics` |
+| `versions.py` | `component_versions()` — consolidated version/identifier string per component |
+| `lineage.py` | `DecisionLineage` — the object an auditor reads to reconstruct a decision without source access |
+
+### `GET /metrics`
+Prometheus-text-compatible (unauthenticated, like `/health/*` — a metric value can
+never itself be a raw identity attribute, so this is safe by construction). Metrics:
+`kyc_request_count`, `kyc_error_count`, `kyc_request_latency_ms`,
+`kyc_extraction_failures_total`, `kyc_validation_failures_total`,
+`kyc_identity_conflicts_total`, `kyc_fraud_referrals_total`, `kyc_decisions_total`,
+`kyc_manual_review_created_total`, `kyc_document_types_total`,
+`kyc_provider_failures_total`.
+
+### `GET /health/ready` (enhanced)
+Now returns a `checks` object verifying meaningful dependencies, not just "the process
+is up": `dataset` (readable, non-empty), `review_store` (SQLite connection responds),
+`auth_config` (at least one reviewer credential configured). `status` is `"degraded"`
+(still HTTP `200`) if any check is non-`"ok"`.
+
+### `CaseResult.decision_lineage`
+Additive field. Not a recomputation — every piece is already retained elsewhere on
+`CaseResult` (`risk_assessment`, `validation`, `fraud_assessment`, `identity_resolution`);
+this adds the two things nothing else captured: which trace produced this decision, and
+which exact version of every component did.
+
+| Field | Meaning |
+|---|---|
+| trace_id | Ties this decision to its full span trace (see the runbook's Diagnostic 3) |
+| policy_version | Same value as `risk_assessment.policy_version` |
+| component_versions | `document_intelligence_provider`, `fraud_forensics_provider`, `identity_resolution`, `evidence_validation`, `decision_policy` — every version string needed to know exactly which logic ran |
+| risk_factor_summary | One line per risk factor, human-readable |
+| evidence_reference_count | Total evidence references across all risk factors — a quick completeness signal (zero would be suspicious for a non-`APPROVE` decision) |
+
+**Note on reproducibility testing**: `decision_lineage.trace_id` is intentionally
+unique per call (it identifies a specific traced operation, not a property of the
+evidence) — `tests/test_release_integrity.py` and `scripts/sanity_check.py` bind a
+fixed `trace_id="baseline"` via `bind_trace_context()` before comparing against the
+committed golden snapshots, so those remain true byte-for-byte regression checks
+rather than failing on an intentionally-volatile field.

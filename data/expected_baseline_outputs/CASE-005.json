@@ -1180,5 +1180,23 @@
       "REVIEW:identity_conflict"
     ],
     "explanation": "Case CASE-005: 2 risk factor(s) found (1x fraud_signal, 1x identity_conflict), none of which is a hard-stop condition. Policy outcome: REVIEW."
+  },
+  "decision_lineage": {
+    "trace_id": "baseline",
+    "case_id": "CASE-005",
+    "decision": "REVIEW",
+    "policy_version": "1.0.0",
+    "component_versions": {
+      "decision_policy": "1.0.0",
+      "evidence_validation": "1.0.0",
+      "identity_resolution": "1.0.0 (fuzzy_threshold=0.75)",
+      "document_intelligence_provider": "deterministic_sidecar_ocr",
+      "fraud_forensics_provider": "deterministic_marker_forensics"
+    },
+    "risk_factor_summary": [
+      "CASE-005:full_name:CONFLICT (identity_conflict, HIGH)",
+      "FRAUD:CASE-005:full_name:CASE-005-PASSPORT:CASE-005-NID (fraud_signal, MEDIUM)"
+    ],
+    "evidence_reference_count": 4
   }
 }

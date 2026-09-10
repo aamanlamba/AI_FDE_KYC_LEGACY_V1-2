@@ -4,6 +4,8 @@ from uuid import uuid4
 from ..evidence_validation.models import Severity, ValidationStatus
 from ..identity_resolution import MatchStatus
 from ..models import CaseResult
+from ..observability import metrics as obs_metrics
+from ..observability import start_span
 from .errors import ReviewNotEligibleError
 from .models import EvidenceSummary, ReviewCase, ReviewPriority, ReviewStatus
 from .store import ReviewStore
@@ -83,33 +85,35 @@ def open_review_case(
     policy route into it is defined anywhere in this repository today, so any other
     decision is rejected rather than silently accepted.
     """
-    if case_result.decision != "REVIEW":
-        raise ReviewNotEligibleError(
-            f"case {case_result.case_id} has decision {case_result.decision!r}; only REVIEW "
-            f"decisions may open an ordinary review case (no alternate route is defined)."
+    with start_span('review.open', case_id=case_result.case_id):
+        if case_result.decision != "REVIEW":
+            raise ReviewNotEligibleError(
+                f"case {case_result.case_id} has decision {case_result.decision!r}; only REVIEW "
+                f"decisions may open an ordinary review case (no alternate route is defined)."
+            )
+
+        existing = store.find_open_review_for_case(case_result.case_id)
+        if existing is not None:
+            return existing
+
+        provider = summary_provider or DeterministicReviewSummaryProvider()
+        trigger, priority = _derive_trigger_and_priority(case_result.risk_assessment.risk_factors)
+
+        review = ReviewCase(
+            review_id=f"RVW-{case_result.case_id}-{uuid4().hex[:8]}",
+            case_id=case_result.case_id,
+            trigger=trigger,
+            priority=priority,
+            evidence_summary=_build_evidence_summary(case_result),
+            discrepancies=_discrepancies(case_result),
+            failed_validations=_failed_validations(case_result),
+            fraud_signals=_fraud_signal_descriptions(case_result),
+            reason_codes=case_result.reason_codes,
+            status=ReviewStatus.OPEN,
+            created_at=datetime.now(timezone.utc).isoformat(),
+            policy_version=case_result.risk_assessment.policy_version,
+            reviewer_summary=provider.summarize(case_result, case_result.risk_assessment),
         )
-
-    existing = store.find_open_review_for_case(case_result.case_id)
-    if existing is not None:
-        return existing
-
-    provider = summary_provider or DeterministicReviewSummaryProvider()
-    trigger, priority = _derive_trigger_and_priority(case_result.risk_assessment.risk_factors)
-
-    review = ReviewCase(
-        review_id=f"RVW-{case_result.case_id}-{uuid4().hex[:8]}",
-        case_id=case_result.case_id,
-        trigger=trigger,
-        priority=priority,
-        evidence_summary=_build_evidence_summary(case_result),
-        discrepancies=_discrepancies(case_result),
-        failed_validations=_failed_validations(case_result),
-        fraud_signals=_fraud_signal_descriptions(case_result),
-        reason_codes=case_result.reason_codes,
-        status=ReviewStatus.OPEN,
-        created_at=datetime.now(timezone.utc).isoformat(),
-        policy_version=case_result.risk_assessment.policy_version,
-        reviewer_summary=provider.summarize(case_result, case_result.risk_assessment),
-    )
-    store.create_review(review)
-    return review
+        store.create_review(review)
+        obs_metrics.manual_review_created.inc(priority=priority.value)
+        return review

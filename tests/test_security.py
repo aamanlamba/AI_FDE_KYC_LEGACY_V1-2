@@ -321,10 +321,16 @@ def test_reviewer_summary_never_contains_raw_control_characters(store):
         parsed_fields={"full_name": hostile_name}, completeness=1.0, warnings=[],
         evidence=evidence, validation=validation, fraud_signals=fraud_signals,
     )
+    from src.observability import build_decision_lineage, get_current_trace_context
+
+    decision_lineage = build_decision_lineage(
+        "CASE-HOSTILE", risk_assessment.policy_outcome, risk_assessment, get_current_trace_context()
+    )
     case_result = CaseResult(
         case_id="CASE-HOSTILE", decision=risk_assessment.policy_outcome, reason_codes=risk_assessment.reason_codes,
         documents=[doc_result], limitation_notice="test", identity_resolution=identity_resolution,
         validation=case_validation, fraud_assessment=fraud_assessment, risk_assessment=risk_assessment,
+        decision_lineage=decision_lineage,
     )
 
     summary = DeterministicReviewSummaryProvider().summarize(case_result, risk_assessment)

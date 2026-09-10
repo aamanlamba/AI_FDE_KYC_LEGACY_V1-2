@@ -89,6 +89,12 @@ identity-resolution, decisioning and operational quality against a curated evalu
 case set, writes a machine-readable report to `var/eval/report.json`, and exits
 non-zero if a release gate fails. See `docs/data_dictionary.md` for the full contract.
 
+## Observability (stage P9)
+Structured JSON logs, a nested trace span per pipeline stage, and `GET /metrics`
+(Prometheus-text-compatible) are built in — see `docs/operations/runbook.md` for exact
+commands to reconstruct what happened and why for any case, and
+`docs/operations/slis_slos.md` for SLI definitions and proposed SLOs.
+
 See `WORKSHOP_RUNBOOK.md` for Windows, Linux/macOS, Docker and troubleshooting instructions.
 
 ## Suggested investigation order

@@ -6,6 +6,7 @@ from .identity_resolution import IdentityResolutionResult
 from .evidence_validation import DocumentValidationReport, CaseValidationReport
 from .fraud_signals import DocumentFraudSignals, FraudAssessment
 from .decision_policy import RiskAssessment
+from .observability import DecisionLineage
 from .policy import Decision
 
 class VerifyDocumentRequest(BaseModel):
@@ -38,3 +39,4 @@ class CaseResult(BaseModel):
     validation: CaseValidationReport
     fraud_assessment: FraudAssessment
     risk_assessment: RiskAssessment
+    decision_lineage: DecisionLineage

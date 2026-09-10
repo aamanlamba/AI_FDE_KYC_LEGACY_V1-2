@@ -257,7 +257,15 @@ def test_extraction_confidence_and_identity_risk_are_not_conflated():
 
 
 def test_all_real_cases_are_reproducible_across_repeated_calls():
+    # As of P9, decision_lineage.trace_id is intentionally unique per call (it
+    # identifies a specific traced operation, not a property of the evidence) --
+    # bind the same trace context for both calls so this test still verifies what it
+    # means to: identical evidence + identical policy version produces an identical
+    # decision, not that two separate operations share a trace id.
+    from src.observability import bind_trace_context
+
     for case in list_cases():
-        first = verify_case(case["case_id"])
-        second = verify_case(case["case_id"])
+        with bind_trace_context(trace_id="repro-test-trace"):
+            first = verify_case(case["case_id"])
+            second = verify_case(case["case_id"])
         assert first.model_dump() == second.model_dump()

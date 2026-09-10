@@ -11,8 +11,15 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from src.observability import bind_trace_context
 from src.repository import list_cases, load_ground_truth, load_sidecar
 from src.service import verify_case
+
+# decision_lineage.trace_id (P9) is unique per call by design; bind a fixed value so
+# the drift check below compares a true regression snapshot rather than failing on an
+# intentionally-random field every run. The committed expected_baseline_outputs were
+# generated under this same fixed trace_id.
+BASELINE_TRACE_ID = "baseline"
 
 EXPECTED_CASES = 6
 EXPECTED_DOCUMENTS = 13
@@ -129,7 +136,8 @@ for case in cases:
                 err(f"sidecar missing core labels {doc_id}")
 
     try:
-        actual = verify_case(case_id).model_dump(mode="json")
+        with bind_trace_context(trace_id=BASELINE_TRACE_ID):
+            actual = verify_case(case_id).model_dump(mode="json")
     except Exception as exc:
         err(f"case flow failed {case_id}: {exc}")
         continue

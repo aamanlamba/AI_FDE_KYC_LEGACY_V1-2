@@ -1182,5 +1182,23 @@
       "HARD_STOP:fraud_signal"
     ],
     "explanation": "Case CASE-006: 2 risk factor(s) found (1x document_decision, 1x fraud_signal). Policy outcome: REJECT, triggered by 2 hard-stop factor(s): CASE-006-PASSPORT:DOCUMENT_REJECT: CASE-006-PASSPORT independently REJECTed by document-level rules: SUSPECTED_TAMPERING.; FRAUD:CASE-006-PASSPORT:TAMPER_MARKER_DETECTED: The deterministic OCR sidecar contains the synthetic tamper-fixture marker 'ALTERED_TEXT_REGION_DETECTED'. This is a training-data fixture signal, not a cryptographic or pixel-level forensic finding."
+  },
+  "decision_lineage": {
+    "trace_id": "baseline",
+    "case_id": "CASE-006",
+    "decision": "REJECT",
+    "policy_version": "1.0.0",
+    "component_versions": {
+      "decision_policy": "1.0.0",
+      "evidence_validation": "1.0.0",
+      "identity_resolution": "1.0.0 (fuzzy_threshold=0.75)",
+      "document_intelligence_provider": "deterministic_sidecar_ocr",
+      "fraud_forensics_provider": "deterministic_marker_forensics"
+    },
+    "risk_factor_summary": [
+      "CASE-006-PASSPORT:DOCUMENT_REJECT (document_decision, CRITICAL, hard-stop)",
+      "FRAUD:CASE-006-PASSPORT:TAMPER_MARKER_DETECTED (fraud_signal, CRITICAL, hard-stop)"
+    ],
+    "evidence_reference_count": 2
   }
 }
