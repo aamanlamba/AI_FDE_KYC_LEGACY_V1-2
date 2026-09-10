@@ -227,6 +227,43 @@ def test_different_idempotency_keys_are_not_conflated():
         review_transition_rate_limiter.reset()
 
 
+def test_concurrent_retries_with_the_same_idempotency_key_never_409():
+    """P11 red-team regression: firing N concurrent requests with the same
+    Idempotency-Key used to let a retry land in the window between another thread's
+    store mutation and its cache write, so the loser re-ran the transition against
+    already-mutated state and got a 409 instead of the cached success. Every retry of
+    the same key must observe the one successful result, never an error, and the
+    transition must be applied exactly once."""
+    review_transition_idempotency_cache.reset()
+    review_transition_rate_limiter.reset()  # 8 concurrent calls stay well under the default limit of 20
+    store = ReviewStore(":memory:")
+    appmod.app.dependency_overrides[appmod.review_store_dependency] = lambda: store
+    try:
+        client = TestClient(appmod.app)
+        headers = {"X-API-Key": "workshop-reviewer-key"}
+        opened = client.post("/v1/cases/CASE-005/reviews", headers=headers).json()
+        review_id = opened["review_id"]
+
+        idem_headers = {**headers, "Idempotency-Key": "concurrent-retry-key"}
+        body = {"new_status": "IN_REVIEW", "analyst_action": "start", "rationale": "concurrent retry"}
+
+        def fire(_):
+            return client.post(f"/v1/reviews/{review_id}/transitions", headers=idem_headers, json=body)
+
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            responses = list(pool.map(fire, range(8)))
+
+        assert all(r.status_code == 200 for r in responses), [r.status_code for r in responses]
+        bodies = [r.json() for r in responses]
+        assert all(b == bodies[0] for b in bodies)
+        history = client.get(f"/v1/reviews/{review_id}/history", headers=headers).json()
+        assert len(history) == 1
+    finally:
+        appmod.app.dependency_overrides.clear()
+        review_transition_idempotency_cache.reset()
+        review_transition_rate_limiter.reset()
+
+
 # --- concurrency: a real, measured smoke test (P10 requirement 12: no unverified claims) --
 
 def test_concurrent_verify_requests_succeed_without_error_or_corruption():

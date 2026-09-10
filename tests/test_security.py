@@ -9,6 +9,7 @@ from src.review import ReviewStatus, ReviewStore, open_review_case
 from src.security import (
     AuthenticationError,
     AuthorizationError,
+    IdempotencyCache,
     RateLimitExceededError,
     RateLimiter,
     StaticWorkshopAuthorizer,
@@ -172,6 +173,33 @@ def test_authorize_helper_distinguishes_authentication_from_authorization():
 
 
 # --- rate limiting -----------------------------------------------------------------
+
+def test_idempotency_cache_get_or_compute_runs_compute_once_per_key():
+    cache = IdempotencyCache()
+    calls = []
+
+    def compute():
+        calls.append(1)
+        return "result"
+
+    first = cache.get_or_compute("k", compute)
+    second = cache.get_or_compute("k", compute)
+    assert first == second == "result"
+    assert len(calls) == 1  # second call was served from cache, not recomputed
+
+
+def test_idempotency_cache_get_or_compute_does_not_cache_a_failure():
+    cache = IdempotencyCache()
+
+    def failing():
+        raise ValueError("boom")
+
+    with pytest.raises(ValueError):
+        cache.get_or_compute("k", failing)
+    # a failed compute must not poison the cache -- a subsequent call for the same key
+    # must retry, not replay the exception
+    assert cache.get_or_compute("k", lambda: "recovered") == "recovered"
+
 
 def test_rate_limiter_blocks_after_the_configured_threshold():
     limiter = RateLimiter(max_requests=3, window_seconds=60.0)

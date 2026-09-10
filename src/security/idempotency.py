@@ -38,6 +38,29 @@ class IdempotencyCache:
         with self._lock:
             self._entries[key] = (time.monotonic(), value)
 
+    def get_or_compute(self, key: str, compute) -> Any:
+        """Atomically check-and-populate for one key.
+
+        P11 red-team finding: separate get()/put() calls around a mutating operation
+        (as app.py originally did) leave a window between another caller's compute
+        succeeding and its put() landing, in which a concurrent retry with the same key
+        re-runs compute() itself and can observe a now-invalid state (e.g. a 409 on a
+        transition that already happened), defeating the point of the idempotency key.
+        Holding the lock for the whole check-compute-store sequence serializes retries
+        of the same key so only one ever actually executes `compute`. A failed compute
+        is not cached, matching the previous get()/put() behavior.
+        """
+        with self._lock:
+            entry = self._entries.get(key)
+            if entry is not None:
+                stored_at, value = entry
+                if time.monotonic() - stored_at <= self._ttl_seconds:
+                    return value
+                del self._entries[key]
+            value = compute()
+            self._entries[key] = (time.monotonic(), value)
+            return value
+
     def reset(self) -> None:
         with self._lock:
             self._entries.clear()

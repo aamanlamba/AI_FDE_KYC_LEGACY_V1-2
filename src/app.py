@@ -224,12 +224,13 @@ def transition_review(req: ReviewTransitionRequest,
     # timeout, unsure whether the first attempt landed) returns the original result
     # rather than re-attempting the transition, which could otherwise 409 on a retry
     # of an already-successful request (P10 requirement 10: idempotency).
+    # get_or_compute holds one lock across the whole check-compute-store sequence so
+    # concurrent retries of the same key can never race each other into the store
+    # (P11 red-team finding: separate get()/put() calls left a window where a
+    # concurrent retry could 409 instead of returning the cached success).
+    def compute():
+        return store.apply_transition(review_id,req.new_status,req.analyst_action,req.rationale,req.correction)
     cache_key=f'{review_id}:{idempotency_key}' if idempotency_key else None
     if cache_key:
-        cached=review_transition_idempotency_cache.get(cache_key)
-        if cached is not None:
-            return cached
-    result=store.apply_transition(review_id,req.new_status,req.analyst_action,req.rationale,req.correction)
-    if cache_key:
-        review_transition_idempotency_cache.put(cache_key,result)
-    return result
+        return review_transition_idempotency_cache.get_or_compute(cache_key,compute)
+    return compute()
