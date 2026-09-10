@@ -115,3 +115,13 @@ The following issues are known in the inherited system. They describe the curren
   Docker packaging (non-root user, healthcheck), added a CI pipeline, and fixed 6 real
   CVEs found by `pip-audit` (ADR-007). See `docs/architecture/overview.md` for what
   was changed and, explicitly, what was deliberately left alone.
+- **As of stage P11**: a final adversarial/red-team review re-verified all 10
+  capability areas directly against the live system rather than trusting prior stages'
+  self-reports, and found one genuine defect: P10's idempotency-key mechanism
+  (`IdempotencyCache`) used a non-atomic `get()`/`put()` sequence around the review
+  transition endpoint, so a concurrent retry with the same key could land in a narrow
+  window and receive a spurious 409 instead of the cached success (no duplicate side
+  effect ever occurred). Fixed via `IdempotencyCache.get_or_compute()`, which holds one
+  lock across the whole check-compute-store sequence, with a new concurrent regression
+  test. See `docs/release/` for the full review (production readiness report, residual
+  risk register, test evidence, requirement traceability, deployment readiness).

@@ -108,6 +108,14 @@ covers environment variables, Docker, and process lifecycle.
 
 See `WORKSHOP_RUNBOOK.md` for Windows, Linux/macOS, Docker and troubleshooting instructions.
 
+## Release review (stage P11)
+`docs/release/` contains the final adversarial/red-team review: a production
+readiness report ending in an explicit release classification, a residual risk
+register, full test/red-team/invariant evidence, a per-capability requirement
+traceability matrix, and a deployment readiness checklist. This is the definitive
+account of what was independently re-verified (not just re-reported) and the one real
+defect found and fixed during that review.
+
 ## Suggested investigation order
 1. `docs/business_problem_statement.md`
 2. `docs/system_context.md`
