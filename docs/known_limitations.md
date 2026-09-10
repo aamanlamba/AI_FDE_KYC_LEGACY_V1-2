@@ -6,7 +6,9 @@ The following issues are known in the inherited system. They describe the curren
 - No layout or bounding-box understanding is present.
 - Regex and line-prefix parsing is brittle and document-type specific.
 - No reliable document-authenticity capability exists.
-- Cross-document identity consistency is weak.
+- Cross-document identity consistency is weak. As of stage P2, `src/identity_resolution/`
+  explicitly reports attribute-level match status (see `docs/data_dictionary.md`), but the
+  case `decision` still does not consult it — this is reporting, not a risk gate.
 - No transliteration or locale-aware name normalization exists.
 - Confidence is a heuristic completeness ratio rather than a calibrated probability.
 - Case results are driven by simple document-result aggregation.

@@ -162,5 +162,164 @@
       }
     }
   ],
-  "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."
+  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution is now computed and reported (see identity_resolution.overall_status/confidence) but is not yet consulted by the decision policy.",
+  "identity_resolution": {
+    "case_id": "CASE-005",
+    "overall_status": "CONFLICT",
+    "confidence": 0.0,
+    "attribute_comparisons": [
+      {
+        "attribute": "full_name",
+        "sources": [
+          {
+            "source_id": "SUBMITTED_APPLICATION",
+            "raw_value": "Mohammad Rehman",
+            "normalized_value": "MOHAMMAD REHMAN"
+          },
+          {
+            "source_id": "CASE-005-PASSPORT",
+            "raw_value": "Mohammed Rahman",
+            "normalized_value": "MOHAMMED RAHMAN"
+          },
+          {
+            "source_id": "CASE-005-NID",
+            "raw_value": "Moharnmad Rehrnan",
+            "normalized_value": "MOHARNMAD REHRNAN"
+          }
+        ],
+        "pairwise": [
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-005-PASSPORT",
+            "status": "FUZZY_MATCH",
+            "similarity": 0.867,
+            "notes": [
+              "SIMILARITY=0.867"
+            ]
+          },
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-005-NID",
+            "status": "FUZZY_MATCH",
+            "similarity": 0.812,
+            "notes": [
+              "SIMILARITY=0.812"
+            ]
+          },
+          {
+            "source_a": "CASE-005-PASSPORT",
+            "source_b": "CASE-005-NID",
+            "status": "CONFLICT",
+            "similarity": 0.688,
+            "notes": [
+              "SIMILARITY=0.688"
+            ]
+          }
+        ],
+        "status": "CONFLICT",
+        "supporting_documents": [
+          "CASE-005-NID",
+          "CASE-005-PASSPORT"
+        ],
+        "reason_codes": [
+          "FULL_NAME_CONFLICT"
+        ]
+      },
+      {
+        "attribute": "date_of_birth",
+        "sources": [
+          {
+            "source_id": "SUBMITTED_APPLICATION",
+            "raw_value": "1992-12-08",
+            "normalized_value": "1992-12-08"
+          },
+          {
+            "source_id": "CASE-005-PASSPORT",
+            "raw_value": "1992-12-08",
+            "normalized_value": "1992-12-08"
+          },
+          {
+            "source_id": "CASE-005-NID",
+            "raw_value": "1992-12-08",
+            "normalized_value": "1992-12-08"
+          }
+        ],
+        "pairwise": [
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-005-PASSPORT",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-005-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "CASE-005-PASSPORT",
+            "source_b": "CASE-005-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          }
+        ],
+        "status": "EXACT",
+        "supporting_documents": [
+          "CASE-005-NID",
+          "CASE-005-PASSPORT"
+        ],
+        "reason_codes": [
+          "DATE_OF_BIRTH_CONSISTENT"
+        ]
+      },
+      {
+        "attribute": "address",
+        "sources": [
+          {
+            "source_id": "SUBMITTED_APPLICATION",
+            "raw_value": "93 Market Road, Meridian City",
+            "normalized_value": "93 MARKET ROAD MERIDIAN CITY"
+          },
+          {
+            "source_id": "CASE-005-NID",
+            "raw_value": "93 Market Road, Meridian City",
+            "normalized_value": "93 MARKET ROAD MERIDIAN CITY"
+          }
+        ],
+        "pairwise": [
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-005-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          }
+        ],
+        "status": "EXACT",
+        "supporting_documents": [
+          "CASE-005-NID"
+        ],
+        "reason_codes": [
+          "ADDRESS_CONSISTENT"
+        ]
+      }
+    ],
+    "conflicts": [
+      "full_name: CASE-005-PASSPORT vs CASE-005-NID (SIMILARITY=0.688)"
+    ],
+    "supporting_documents": [
+      "CASE-005-NID",
+      "CASE-005-PASSPORT"
+    ],
+    "reason_codes": [
+      "IDENTITY_CONFLICT",
+      "FULL_NAME_CONFLICT",
+      "DATE_OF_BIRTH_CONSISTENT",
+      "ADDRESS_CONSISTENT"
+    ]
+  }
 }

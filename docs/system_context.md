@@ -46,8 +46,13 @@ deterministic provider behind the same interface without any change to decisioni
    per-field format validation — it is also not a calibrated probability, and this is
    stated explicitly in `docs/data_dictionary.md`.
 3. Case verification is merely an aggregation of document results; it does not perform
-   robust entity resolution. **Unchanged in this stage by design** — identity resolution
-   is explicitly deferred to a later stage.
+   robust entity resolution. **As of stage P2, this is partially addressed**: an explicit
+   `src/identity_resolution/` capability now compares full_name/date_of_birth/address
+   across the submitted application and every document's evidence and reports a
+   `CONFLICT`/`FUZZY_MATCH`/`NORMALIZED_MATCH`/`EXACT`/`INSUFFICIENT_EVIDENCE` verdict
+   (see `docs/data_dictionary.md`). The `decision` field itself still does not consult
+   this result — case-level APPROVE/REVIEW/REJECT remains the unchanged worst-of-documents
+   policy, pending a later risk-policy stage.
 4. Fraud handling is limited to obvious synthetic markers. **Unchanged in this stage by
    design** — the Document Intelligence layer assesses capture quality only, not
    authenticity/tampering, to avoid scope creep into decisioning.

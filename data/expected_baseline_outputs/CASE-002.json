@@ -174,5 +174,156 @@
       }
     }
   ],
-  "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."
+  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution is now computed and reported (see identity_resolution.overall_status/confidence) but is not yet consulted by the decision policy.",
+  "identity_resolution": {
+    "case_id": "CASE-002",
+    "overall_status": "EXACT",
+    "confidence": 1.0,
+    "attribute_comparisons": [
+      {
+        "attribute": "full_name",
+        "sources": [
+          {
+            "source_id": "SUBMITTED_APPLICATION",
+            "raw_value": "Nisha Rao",
+            "normalized_value": "NISHA RAO"
+          },
+          {
+            "source_id": "CASE-002-PASSPORT",
+            "raw_value": "Nisha Rao",
+            "normalized_value": "NISHA RAO"
+          },
+          {
+            "source_id": "CASE-002-NID",
+            "raw_value": "Nisha Rao",
+            "normalized_value": "NISHA RAO"
+          }
+        ],
+        "pairwise": [
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-002-PASSPORT",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-002-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "CASE-002-PASSPORT",
+            "source_b": "CASE-002-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          }
+        ],
+        "status": "EXACT",
+        "supporting_documents": [
+          "CASE-002-NID",
+          "CASE-002-PASSPORT"
+        ],
+        "reason_codes": [
+          "FULL_NAME_CONSISTENT"
+        ]
+      },
+      {
+        "attribute": "date_of_birth",
+        "sources": [
+          {
+            "source_id": "SUBMITTED_APPLICATION",
+            "raw_value": "1988-11-03",
+            "normalized_value": "1988-11-03"
+          },
+          {
+            "source_id": "CASE-002-PASSPORT",
+            "raw_value": "1988-11-03",
+            "normalized_value": "1988-11-03"
+          },
+          {
+            "source_id": "CASE-002-NID",
+            "raw_value": "1988-11-03",
+            "normalized_value": "1988-11-03"
+          }
+        ],
+        "pairwise": [
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-002-PASSPORT",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-002-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "CASE-002-PASSPORT",
+            "source_b": "CASE-002-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          }
+        ],
+        "status": "EXACT",
+        "supporting_documents": [
+          "CASE-002-NID",
+          "CASE-002-PASSPORT"
+        ],
+        "reason_codes": [
+          "DATE_OF_BIRTH_CONSISTENT"
+        ]
+      },
+      {
+        "attribute": "address",
+        "sources": [
+          {
+            "source_id": "SUBMITTED_APPLICATION",
+            "raw_value": "42 Lake View Road, Meridian City",
+            "normalized_value": "42 LAKE VIEW ROAD MERIDIAN CITY"
+          },
+          {
+            "source_id": "CASE-002-NID",
+            "raw_value": "42 Lake View Road, Meridian City",
+            "normalized_value": "42 LAKE VIEW ROAD MERIDIAN CITY"
+          }
+        ],
+        "pairwise": [
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-002-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          }
+        ],
+        "status": "EXACT",
+        "supporting_documents": [
+          "CASE-002-NID"
+        ],
+        "reason_codes": [
+          "ADDRESS_CONSISTENT"
+        ]
+      }
+    ],
+    "conflicts": [],
+    "supporting_documents": [
+      "CASE-002-NID",
+      "CASE-002-PASSPORT"
+    ],
+    "reason_codes": [
+      "IDENTITY_EXACT",
+      "FULL_NAME_CONSISTENT",
+      "DATE_OF_BIRTH_CONSISTENT",
+      "ADDRESS_CONSISTENT"
+    ]
+  }
 }

@@ -240,5 +240,231 @@
       }
     }
   ],
-  "limitation_notice": "Repo 1.0 aggregates document decisions only; it does not perform robust cross-document identity resolution."
+  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution is now computed and reported (see identity_resolution.overall_status/confidence) but is not yet consulted by the decision policy.",
+  "identity_resolution": {
+    "case_id": "CASE-001",
+    "overall_status": "EXACT",
+    "confidence": 1.0,
+    "attribute_comparisons": [
+      {
+        "attribute": "full_name",
+        "sources": [
+          {
+            "source_id": "SUBMITTED_APPLICATION",
+            "raw_value": "Aarav Mehta",
+            "normalized_value": "AARAV MEHTA"
+          },
+          {
+            "source_id": "CASE-001-PASSPORT",
+            "raw_value": "Aarav Mehta",
+            "normalized_value": "AARAV MEHTA"
+          },
+          {
+            "source_id": "CASE-001-NID",
+            "raw_value": "Aarav Mehta",
+            "normalized_value": "AARAV MEHTA"
+          },
+          {
+            "source_id": "CASE-001-DL",
+            "raw_value": "Aarav Mehta",
+            "normalized_value": "AARAV MEHTA"
+          }
+        ],
+        "pairwise": [
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-001-PASSPORT",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-001-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-001-DL",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "CASE-001-PASSPORT",
+            "source_b": "CASE-001-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "CASE-001-PASSPORT",
+            "source_b": "CASE-001-DL",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "CASE-001-NID",
+            "source_b": "CASE-001-DL",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          }
+        ],
+        "status": "EXACT",
+        "supporting_documents": [
+          "CASE-001-DL",
+          "CASE-001-NID",
+          "CASE-001-PASSPORT"
+        ],
+        "reason_codes": [
+          "FULL_NAME_CONSISTENT"
+        ]
+      },
+      {
+        "attribute": "date_of_birth",
+        "sources": [
+          {
+            "source_id": "SUBMITTED_APPLICATION",
+            "raw_value": "1991-04-12",
+            "normalized_value": "1991-04-12"
+          },
+          {
+            "source_id": "CASE-001-PASSPORT",
+            "raw_value": "1991-04-12",
+            "normalized_value": "1991-04-12"
+          },
+          {
+            "source_id": "CASE-001-NID",
+            "raw_value": "1991-04-12",
+            "normalized_value": "1991-04-12"
+          },
+          {
+            "source_id": "CASE-001-DL",
+            "raw_value": "1991-04-12",
+            "normalized_value": "1991-04-12"
+          }
+        ],
+        "pairwise": [
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-001-PASSPORT",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-001-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-001-DL",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "CASE-001-PASSPORT",
+            "source_b": "CASE-001-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "CASE-001-PASSPORT",
+            "source_b": "CASE-001-DL",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "CASE-001-NID",
+            "source_b": "CASE-001-DL",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          }
+        ],
+        "status": "EXACT",
+        "supporting_documents": [
+          "CASE-001-DL",
+          "CASE-001-NID",
+          "CASE-001-PASSPORT"
+        ],
+        "reason_codes": [
+          "DATE_OF_BIRTH_CONSISTENT"
+        ]
+      },
+      {
+        "attribute": "address",
+        "sources": [
+          {
+            "source_id": "SUBMITTED_APPLICATION",
+            "raw_value": "18 Cedar Avenue, Meridian City",
+            "normalized_value": "18 CEDAR AVENUE MERIDIAN CITY"
+          },
+          {
+            "source_id": "CASE-001-NID",
+            "raw_value": "18 Cedar Avenue, Meridian City",
+            "normalized_value": "18 CEDAR AVENUE MERIDIAN CITY"
+          },
+          {
+            "source_id": "CASE-001-DL",
+            "raw_value": "18 Cedar Avenue, Meridian City",
+            "normalized_value": "18 CEDAR AVENUE MERIDIAN CITY"
+          }
+        ],
+        "pairwise": [
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-001-NID",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "SUBMITTED_APPLICATION",
+            "source_b": "CASE-001-DL",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          },
+          {
+            "source_a": "CASE-001-NID",
+            "source_b": "CASE-001-DL",
+            "status": "EXACT",
+            "similarity": 1.0,
+            "notes": []
+          }
+        ],
+        "status": "EXACT",
+        "supporting_documents": [
+          "CASE-001-DL",
+          "CASE-001-NID"
+        ],
+        "reason_codes": [
+          "ADDRESS_CONSISTENT"
+        ]
+      }
+    ],
+    "conflicts": [],
+    "supporting_documents": [
+      "CASE-001-DL",
+      "CASE-001-NID",
+      "CASE-001-PASSPORT"
+    ],
+    "reason_codes": [
+      "IDENTITY_EXACT",
+      "FULL_NAME_CONSISTENT",
+      "DATE_OF_BIRTH_CONSISTENT",
+      "ADDRESS_CONSISTENT"
+    ]
+  }
 }

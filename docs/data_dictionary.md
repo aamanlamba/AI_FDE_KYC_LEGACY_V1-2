@@ -35,6 +35,7 @@
 | warnings | Parser/validation warnings |
 | source | Indicates deterministic sidecar OCR |
 | evidence | Structured `DocumentEvidence` from the Document Intelligence layer (additive; see below) |
+| identity_resolution | (Case-level only) Structured `IdentityResolutionResult` from cross-document identity resolution (added in stage P2; see below) |
 
 ## Document evidence (`evidence`, added in stage P1)
 
@@ -63,3 +64,34 @@ later stage.
 | source | Provider name |
 | provenance | Locator back to the evidence artifact and field (e.g. `data/sidecar_ocr/<doc>.txt#field=<name>`) |
 | warnings | e.g. `FIELD_NOT_FOUND`, `FIELD_FORMAT_INVALID` |
+
+## Identity resolution (`identity_resolution`, added in stage P2)
+
+Additive, schema-validated cross-document identity comparison
+(`src/identity_resolution/`). Explicitly answers whether the submitted application and
+every document's extracted evidence describe a consistent claimed identity for
+`full_name`, `date_of_birth`, and `address` (where present). `document_number` is
+deliberately **not** compared cross-document — different document types legitimately
+carry different identifiers for the same person. This is evidence-strength reporting
+only: it does not change `decision` in this stage (that remains the unchanged
+worst-of-documents policy in `src/rules.py`/`src/service.py`) and is not itself a risk
+policy.
+
+| Field | Meaning |
+|---|---|
+| case_id | Synthetic case identifier |
+| overall_status | Worst status across all attributes: `EXACT` / `NORMALIZED_MATCH` / `FUZZY_MATCH` / `CONFLICT` / `INSUFFICIENT_EVIDENCE` |
+| confidence | `[0,1]` evidence-strength heuristic. Forced to `0.0` if `overall_status` is `CONFLICT` — a confirmed contradiction is never averaged away by other clean attributes |
+| attribute_comparisons | Per-attribute (`full_name`, `date_of_birth`, `address`) breakdown — sources, pairwise comparisons, status, reason codes |
+| conflicts | Human-readable descriptions of every pairwise `CONFLICT` found |
+| supporting_documents | Document IDs that contributed evidence |
+| reason_codes | e.g. `IDENTITY_CONFLICT`, `FULL_NAME_FUZZY_MATCH`, `ADDRESS_INSUFFICIENT_EVIDENCE` |
+
+### Match status semantics
+| Status | Meaning |
+|---|---|
+| `EXACT` | Raw values are character-identical |
+| `NORMALIZED_MATCH` | Differ only by whitespace/punctuation/case, initials (`JOHN A SMITH` vs `JOHN ANDREW SMITH`), or token order (`SMITH JOHN` vs `JOHN SMITH`) — deterministic, explainable rules, not similarity scoring |
+| `FUZZY_MATCH` | Below normalization rules but above a calibrated similarity threshold (e.g. OCR-corrupted spelling). **Never treated as proof of identity by itself** — it is reported, not upgraded |
+| `CONFLICT` | Materially different values (name similarity below threshold, or any DOB mismatch — dates are exact-or-contradiction, never fuzzy) |
+| `INSUFFICIENT_EVIDENCE` | Fewer than two sources available for that attribute (e.g. an attribute only the application supplied, with no document corroborating it) |

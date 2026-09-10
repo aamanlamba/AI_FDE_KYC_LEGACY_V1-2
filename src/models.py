@@ -2,6 +2,7 @@ from typing import Literal, Any
 from pydantic import BaseModel, Field
 
 from .document_intelligence import DocumentEvidence
+from .identity_resolution import IdentityResolutionResult
 
 Decision = Literal["APPROVE","REVIEW","REJECT"]
 
@@ -25,3 +26,4 @@ class CaseResult(BaseModel):
     reason_codes: list[str]
     documents: list[DocumentResult]
     limitation_notice: str
+    identity_resolution: IdentityResolutionResult
