@@ -25,10 +25,17 @@ Synthetic application + identity document image
                 |                 categories, PASS/FAIL/        matching (P2, unchanged
                 |                 UNKNOWN/NOT_APPLICABLE/       in this stage)
                 |                 NOT_IMPLEMENTED per rule
+                |                            |                         |
+                |                            v                         v
+                |                 Fraud Signal engine (src/fraud_signals/)
+                |                 tamper marker (labeled fixture-source) +
+                |                 temporal impossibilities + identity conflicts
+                |                 (from Identity Resolution) + document duplication
+                |                 -> FraudSignal evidence, never a verdict
                 |                            |
                 |               attached additively to the API
-                |               response as `validation` (not yet
-                |               consumed by decisioning)
+                |               response as `validation` / `fraud_assessment`
+                |               (neither yet consumed by decisioning)
                 v
      APPROVE / REVIEW / REJECT
 ```
@@ -61,9 +68,15 @@ deterministic provider behind the same interface without any change to decisioni
    (see `docs/data_dictionary.md`). The `decision` field itself still does not consult
    this result — case-level APPROVE/REVIEW/REJECT remains the unchanged worst-of-documents
    policy, pending a later risk-policy stage.
-4. Fraud handling is limited to obvious synthetic markers. **Unchanged in this stage by
-   design** — the Document Intelligence layer assesses capture quality only, not
-   authenticity/tampering, to avoid scope creep into decisioning.
+4. Fraud handling is limited to obvious synthetic markers. **As of stage P4, this is
+   now an explicit, separable evidence layer**: `src/fraud_signals/` reports labeled
+   `FraudSignal` findings (tamper marker, temporal impossibility, identity conflict,
+   document duplication, extraction inconsistency) behind a `DocumentForensicsProvider`
+   interface a real forensics provider could later implement. The underlying detection
+   capability is still limited to the same synthetic text marker plus signals derived
+   from P1-P3's evidence/validation/identity layers — no pixel-level forensics exists,
+   and this is disclosed rather than implied. `src/rules.py`'s own tamper check is
+   unchanged. See `docs/data_dictionary.md`.
 5. No provider adapter, reviewer queue, persistence layer, trace spans or policy
    versioning. A provider adapter now exists for document evidence extraction
    (`DocumentIntelligenceProvider`); reviewer queue, persistence, tracing and policy
@@ -81,3 +94,11 @@ deterministic provider behind the same interface without any change to decisioni
    `config/baseline.json` is now genuinely authoritative for `mandatory_fields` and
    `min_field_completeness_for_approve` (via `src/policy.py`), partially closing a gap
    the P0 baseline assessment flagged.
+7. **As of stage P4**: fraud/anomaly evidence is now a distinct subsystem
+   (`src/fraud_signals/`), separated from decision policy in the same way P3 separated
+   validation from decisioning. It reuses P2/P3's already-computed `FAIL`/`CONFLICT`
+   findings rather than re-implementing checks, and preserves a hard architectural
+   distinction between `FRAUD_SIGNAL_PRESENT` (evidence exists) and `FRAUD_PROVEN`
+   (reserved — no code path in this repository can produce it; proving fraud needs
+   evidence this offline system cannot generate). No LLM is called anywhere in this
+   fraud-signal layer, or anywhere in this repository.

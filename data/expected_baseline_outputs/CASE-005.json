@@ -269,6 +269,10 @@
             ]
           }
         ]
+      },
+      "fraud_signals": {
+        "document_id": "CASE-005-PASSPORT",
+        "signals": []
       }
     },
     {
@@ -535,10 +539,14 @@
             ]
           }
         ]
+      },
+      "fraud_signals": {
+        "document_id": "CASE-005-NID",
+        "signals": []
       }
     }
   ],
-  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution and validation are now computed and reported (see identity_resolution.overall_status/confidence and validation.document_reports/case_level_results) but neither is yet consulted by the decision policy.",
+  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution, validation and fraud_assessment are now computed and reported (see identity_resolution.overall_status/confidence, validation.document_reports/case_level_results and fraud_assessment.status/reason_codes) but none of them is yet consulted by the decision policy.",
   "identity_resolution": {
     "case_id": "CASE-005",
     "overall_status": "CONFLICT",
@@ -1094,5 +1102,39 @@
         ]
       }
     ]
+  },
+  "fraud_assessment": {
+    "case_id": "CASE-005",
+    "status": "FRAUD_SIGNAL_PRESENT",
+    "document_signals": [
+      {
+        "document_id": "CASE-005-PASSPORT",
+        "signals": []
+      },
+      {
+        "document_id": "CASE-005-NID",
+        "signals": []
+      }
+    ],
+    "case_level_signals": [
+      {
+        "signal_id": "CASE-005:full_name:CASE-005-PASSPORT:CASE-005-NID",
+        "category": "identity_conflict",
+        "severity": "MEDIUM",
+        "confidence": 0.312,
+        "source": "identity_resolution:full_name",
+        "supporting_evidence": [
+          "CASE-005-PASSPORT",
+          "CASE-005-NID"
+        ],
+        "explanation": "Conflicting full_name between CASE-005-PASSPORT and CASE-005-NID (SIMILARITY=0.688)."
+      }
+    ],
+    "signal_count": 1,
+    "highest_severity": "MEDIUM",
+    "reason_codes": [
+      "FRAUD_SIGNAL:identity_conflict"
+    ],
+    "explanation": "1 fraud signal(s) detected across 2 document(s)."
   }
 }

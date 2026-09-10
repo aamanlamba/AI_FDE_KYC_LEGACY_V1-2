@@ -5,6 +5,7 @@ from .policy import MANDATORY_FIELDS, MIN_FIELD_COMPLETENESS_FOR_APPROVE
 
 REFERENCE_DATE=date(2026,9,9)  # frozen for reproducible workshop results
 MANDATORY=MANDATORY_FIELDS  # sourced from config/baseline.json when present (see src/policy.py)
+TAMPER_MARKER='ALTERED_TEXT_REGION_DETECTED'  # synthetic test-fixture marker; see src/fraud_signals/
 PATTERNS={
 'passport': re.compile(r'^PXT\d{6}$'),
 'national_id': re.compile(r'^MID-\d{4}-\d{4}$'),
@@ -27,7 +28,7 @@ def evaluate(fields: dict, raw_text: str) -> tuple[str,list[str],list[str]]:
         try:
             if date.fromisoformat(expiry) < REFERENCE_DATE: reasons.append('DOCUMENT_EXPIRED')
         except ValueError: reasons.append('INVALID_EXPIRY_DATE')
-    if 'ALTERED_TEXT_REGION_DETECTED' in raw_text: reasons.append('SUSPECTED_TAMPERING')
+    if TAMPER_MARKER in raw_text: reasons.append('SUSPECTED_TAMPERING')
     if 'DEGRADED' in raw_text: warnings.append('OCR_QUALITY_DEGRADED')
     if '90_DEGREES' in raw_text: warnings.append('ROTATED_DOCUMENT')
     if any(r in reasons for r in ('SUSPECTED_TAMPERING','DOCUMENT_EXPIRED')): return 'REJECT',reasons,warnings

@@ -5,14 +5,27 @@ The following issues are known in the inherited system. They describe the curren
 - OCR is represented by deterministic sidecar text rather than inference from document pixels.
 - No layout or bounding-box understanding is present.
 - Regex and line-prefix parsing is brittle and document-type specific.
-- No reliable document-authenticity capability exists.
+- No reliable document-authenticity capability exists. As of stage P4, this is now
+  architecturally explicit rather than implicit: `src/fraud_signals/` reports fraud
+  *signals* (evidence), never a fraud *verdict*, via a `DocumentForensicsProvider`
+  interface whose only implementation today is a literal text-marker scan — not
+  pixel-level forensics, which this repository has no capability to perform (its OCR
+  layer never reads image pixels at all). See `docs/data_dictionary.md`.
 - Cross-document identity consistency is weak. As of stage P2, `src/identity_resolution/`
   explicitly reports attribute-level match status (see `docs/data_dictionary.md`), but the
   case `decision` still does not consult it — this is reporting, not a risk gate.
 - No transliteration or locale-aware name normalization exists.
 - Confidence is a heuristic completeness ratio rather than a calibrated probability.
 - Case results are driven by simple document-result aggregation.
-- Tamper detection is limited to a synthetic marker in the training data.
+- Tamper detection is limited to a synthetic marker in the training data. As of stage
+  P4, `src/rules.py`'s decision-relevant tamper check is unchanged (still the same
+  literal marker match, now sourced from a shared `TAMPER_MARKER` constant), and a
+  separate, additive `src/fraud_signals/` layer reports the same finding as a labeled,
+  traceable `FraudSignal` (category `tamper_marker`, source
+  `deterministic_marker_forensics:sidecar_text_substring_match`) alongside other
+  offline-derivable signals (temporal impossibilities, identity conflicts, document
+  duplication) — but this remains the same underlying synthetic-marker detection
+  capability, not real forensics.
 - No external identity, registry or watchlist integration exists.
 - There is no durable human-review queue or evidence-review interface.
 - There is no durable audit datastore.

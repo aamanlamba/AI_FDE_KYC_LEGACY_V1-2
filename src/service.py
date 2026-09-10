@@ -6,6 +6,7 @@ from .models import DocumentResult, CaseResult
 from .document_intelligence import extract_evidence, get_default_provider
 from .identity_resolution import resolve_identity
 from .evidence_validation import validate_document as validate_document_evidence, validate_case as validate_case_evidence
+from .fraud_signals import assess_document_fraud_signals, assess_case_fraud
 
 RANK={'APPROVE':0,'REVIEW':1,'REJECT':2}
 
@@ -15,9 +16,10 @@ def verify_document(document_id: str) -> DocumentResult:
     decision,reasons,rule_warnings=evaluate(fields,text)
     evidence=extract_evidence(get_default_provider(),document_id)
     validation=validate_document_evidence(evidence)
+    fraud_signals=assess_document_fraud_signals(document_id,text,evidence.evidence_reference,validation)
     return DocumentResult(document_id=document_id,document_type=fields.get('document_type'),decision=decision,
         reason_codes=reasons,parsed_fields=fields,completeness=completeness(fields),warnings=parse_warnings+rule_warnings,
-        evidence=evidence,validation=validation)
+        evidence=evidence,validation=validation,fraud_signals=fraud_signals)
 
 def verify_case(case_id: str) -> CaseResult:
     app=load_application(case_id)
@@ -26,8 +28,10 @@ def verify_case(case_id: str) -> CaseResult:
     reason_codes=sorted({r for d in docs for r in d.reason_codes})
     identity_resolution=resolve_identity(case_id,app,[d.evidence for d in docs])
     validation=validate_case_evidence(case_id,[d.validation for d in docs],[d.evidence for d in docs])
+    fraud_assessment=assess_case_fraud(case_id,[d.fraud_signals for d in docs],identity_resolution,validation)
     return CaseResult(case_id=case_id,decision=worst,reason_codes=reason_codes,documents=docs,
       limitation_notice='Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); '
-        'identity_resolution and validation are now computed and reported (see identity_resolution.overall_status/confidence '
-        'and validation.document_reports/case_level_results) but neither is yet consulted by the decision policy.',
-      identity_resolution=identity_resolution,validation=validation)
+        'identity_resolution, validation and fraud_assessment are now computed and reported (see '
+        'identity_resolution.overall_status/confidence, validation.document_reports/case_level_results and '
+        'fraud_assessment.status/reason_codes) but none of them is yet consulted by the decision policy.',
+      identity_resolution=identity_resolution,validation=validation,fraud_assessment=fraud_assessment)

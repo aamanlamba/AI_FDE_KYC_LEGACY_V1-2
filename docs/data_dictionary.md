@@ -37,6 +37,7 @@
 | evidence | Structured `DocumentEvidence` from the Document Intelligence layer (additive; see below) |
 | identity_resolution | (Case-level only) Structured `IdentityResolutionResult` from cross-document identity resolution (added in stage P2; see below) |
 | validation | Structured `DocumentValidationReport` (per document) / `CaseValidationReport` (case-level) from the evidence validation subsystem (added in stage P3; see below) |
+| fraud_signals / fraud_assessment | `DocumentFraudSignals` (per document) / `FraudAssessment` (case-level) from the fraud-signal subsystem (added in stage P4; see below) |
 
 ## Document evidence (`evidence`, added in stage P1)
 
@@ -159,3 +160,67 @@ touching the frozen default.
 back to the historical hard-coded values otherwise), and both `src/rules.py` and
 `src/evidence_validation/` consume these values — closing the gap where
 `config/baseline.json` previously had no effect on running behaviour.
+
+## Fraud signals (`fraud_signals` / `fraud_assessment`, added in stage P4)
+
+Additive, schema-validated fraud *evidence* (`src/fraud_signals/`), explicitly
+separated from decision policy. This layer reports labeled `FraudSignal` findings; it
+does not decide APPROVE/REVIEW/REJECT (unchanged in `src/rules.py`, pending a later
+risk-policy stage) and it never independently declares a document fraudulent — no
+implementation in this repository calls an LLM, or any opaque judgment source, to reach
+a fraud conclusion. Every signal is grounded in a real, executable, deterministic check.
+
+### `FraudSignal`
+| Field | Meaning |
+|---|---|
+| signal_id | Traceable identifier, e.g. `CASE-006-PASSPORT:TAMPER_MARKER_DETECTED` |
+| category | `tamper_marker` / `field_inconsistency` / `temporal_anomaly` / `extraction_inconsistency` / `identity_conflict` / `document_duplication` / `sidecar_metadata_anomaly` (reserved, currently unused) |
+| severity | `INFO` / `LOW` / `MEDIUM` / `HIGH` / `CRITICAL` (same scale as `evidence_validation.Severity`) |
+| confidence | `[0,1]` or `null`. `null` for binary/deterministic findings (a marker match, a rule FAIL) where a probability would be meaningless; numeric only where genuinely derived from a similarity score (e.g. identity-conflict signals: `confidence = 1 - name_similarity`) |
+| source | Accurately labeled origin, e.g. `deterministic_marker_forensics:sidecar_text_substring_match`, `evidence_validation:ISSUEDATE-BEFORE-EXPIRY`, `identity_resolution:full_name` — never implies a capability this system doesn't have |
+| supporting_evidence | Provenance reference(s) this signal traces back to |
+| explanation | Human-readable, evidence-specific explanation |
+
+### `DocumentFraudSignals` / `FraudAssessment`
+| Field | Meaning |
+|---|---|
+| document_signals | Per-document signal lists (tamper marker, temporal anomaly, extraction inconsistency — reused from each `DocumentResult.fraud_signals`, not recomputed) |
+| case_level_signals | Cross-document signals: `identity_conflict` (from `identity_resolution` `CONFLICT` pairwise comparisons) and `document_duplication` (from `evidence_validation`'s `CROSSDOC-NO-DUPLICATE-TYPE`) |
+| status | `NO_SIGNALS_DETECTED` / `FRAUD_SIGNAL_PRESENT` / `FRAUD_PROVEN` (see below) |
+| signal_count | Total signals across documents and case-level |
+| highest_severity | The most severe signal's severity, or `null` if none |
+| reason_codes | e.g. `FRAUD_SIGNAL:tamper_marker`, `FRAUD_SIGNAL:identity_conflict`, or `NO_FRAUD_SIGNALS_DETECTED` |
+
+### `FRAUD_SIGNAL_PRESENT` vs `FRAUD_PROVEN`
+`FRAUD_PROVEN` is a reserved status: **no code path in this repository can produce it.**
+Proving fraud would require evidence this offline, deterministic signal set cannot
+generate — corroborated investigation, cryptographic verification, or a confirmed
+forensic match. Every real and adversarially-constructed synthetic scenario tested
+(`tests/test_fraud_signals.py`) caps at `FRAUD_SIGNAL_PRESENT`, including a
+maximal case combining a tamper marker, a temporal impossibility, an identity
+conflict, and document duplication simultaneously.
+
+### What counts as a fraud-relevant signal (and what deliberately doesn't)
+- **Temporal anomaly**: only genuinely impossible relationships — issued in the future,
+  issued after/on its own expiry, or issued before the holder's date of birth. Plain
+  expiry (a document simply being out of date) is deliberately excluded: it's a
+  mundane lifecycle event, not an anomaly.
+- **False-positive resistance**: `OCR_QUALITY: DEGRADED` and `CAPTURE_ORIENTATION:
+  90_DEGREES` markers never produce a fraud signal on their own — those are ordinary
+  capture-condition markers already handled by the Document Intelligence quality layer
+  (P1), not fraud indicators.
+- Only actual `FAIL` results from `evidence_validation` become signals — `NOT_APPLICABLE`
+  or `UNKNOWN` (missing or unreadable evidence) never fabricates a signal.
+
+### Document forensics provider interface
+`src/fraud_signals/provider.py` defines `DocumentForensicsProvider`, an interface a
+future real forensics provider (image manipulation detection, metadata/EXIF analysis,
+cryptographic signature checks) would implement. Its only current implementation,
+`DeterministicMarkerForensicsProvider`, performs a literal text-marker scan against the
+deterministic OCR sidecar — **not** pixel-level image forensics, which this repository
+cannot perform (its extraction layer never reads image pixels; confirmed by `grep -rn
+"PIL\|Image\|\.png" src/` returning no matches outside test/ops tooling). The marker
+registry (`src/fraud_signals/registry.py`) currently contains exactly one entry — the
+synthetic `ALTERED_TEXT_REGION_DETECTED` tamper fixture — reflecting only what is
+actually present in this training dataset ("where present"), not a fabricated
+capability.

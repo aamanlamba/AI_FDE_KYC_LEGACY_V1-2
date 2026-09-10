@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from .document_intelligence import DocumentEvidence
 from .identity_resolution import IdentityResolutionResult
 from .evidence_validation import DocumentValidationReport, CaseValidationReport
+from .fraud_signals import DocumentFraudSignals, FraudAssessment
 
 Decision = Literal["APPROVE","REVIEW","REJECT"]
 
@@ -21,6 +22,7 @@ class DocumentResult(BaseModel):
     source: str = "deterministic_sidecar_ocr"
     evidence: DocumentEvidence
     validation: DocumentValidationReport
+    fraud_signals: DocumentFraudSignals
 
 class CaseResult(BaseModel):
     case_id: str
@@ -30,3 +32,4 @@ class CaseResult(BaseModel):
     limitation_notice: str
     identity_resolution: IdentityResolutionResult
     validation: CaseValidationReport
+    fraud_assessment: FraudAssessment
