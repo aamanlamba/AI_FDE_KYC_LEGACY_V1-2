@@ -36,6 +36,7 @@
 | source | Indicates deterministic sidecar OCR |
 | evidence | Structured `DocumentEvidence` from the Document Intelligence layer (additive; see below) |
 | identity_resolution | (Case-level only) Structured `IdentityResolutionResult` from cross-document identity resolution (added in stage P2; see below) |
+| validation | Structured `DocumentValidationReport` (per document) / `CaseValidationReport` (case-level) from the evidence validation subsystem (added in stage P3; see below) |
 
 ## Document evidence (`evidence`, added in stage P1)
 
@@ -95,3 +96,66 @@ policy.
 | `FUZZY_MATCH` | Below normalization rules but above a calibrated similarity threshold (e.g. OCR-corrupted spelling). **Never treated as proof of identity by itself** — it is reported, not upgraded |
 | `CONFLICT` | Materially different values (name similarity below threshold, or any DOB mismatch — dates are exact-or-contradiction, never fuzzy) |
 | `INSUFFICIENT_EVIDENCE` | Fewer than two sources available for that attribute (e.g. an attribute only the application supplied, with no document corroborating it) |
+
+## Evidence validation (`validation`, added in stage P3)
+
+Additive, schema-validated, deterministic validation (`src/evidence_validation/`),
+separated out of the legacy `src/rules.py` rule function into individually auditable
+rules. This is **computable-truth checking only** — it does not decide
+APPROVE/REVIEW/REJECT (that remains `src/rules.py`'s unchanged decision policy, pending a
+later risk-policy stage) and it does not assess authenticity/tampering (that also
+remains in `src/rules.py`, unchanged, via its literal tamper-marker check).
+
+| Field (`DocumentValidationReport`) | Meaning |
+|---|---|
+| document_id | Document identifier |
+| reference_date | The ISO date actually used for temporal/expiry checks in this run (see below) |
+| results | List of `ValidationResult`, one or more per category |
+
+| Field (`CaseValidationReport`) | Meaning |
+|---|---|
+| case_id | Case identifier |
+| reference_date | Same as above, case-wide |
+| document_reports | Every document's `DocumentValidationReport` (not recomputed — reused from each `DocumentResult.validation`) |
+| case_level_results | Cross-document structural checks (currently: no duplicate document type within a case) |
+
+### `ValidationResult`
+| Field | Meaning |
+|---|---|
+| rule_id | e.g. `EXPIRY-NOT-PAST`, `MANDATORY-FULL_NAME`, `ISSUEDATE-BEFORE-EXPIRY` |
+| rule_version | Rule-set version (`1.0.0`) — bump when a rule's logic changes, for audit traceability |
+| category | One of the 10 categories below |
+| status | `PASS` / `FAIL` / `UNKNOWN` / `NOT_APPLICABLE` / `NOT_IMPLEMENTED` |
+| severity | `INFO` / `LOW` / `MEDIUM` / `HIGH` / `CRITICAL` |
+| reason_code | Machine-readable outcome code |
+| explanation | Human-readable, evidence-specific explanation |
+| evidence_references | Provenance locator(s) this finding traces back to (never empty) |
+
+### Validation categories
+`schema_validation`, `mandatory_field_validation`, `document_number_format_validation`,
+`date_validation`, `temporal_validation`, `expiry_validation`, `issue_date_consistency`,
+`cross_field_validation` (date_of_birth precedes issue_date), `document_type_validation`,
+`cross_document_consistency_validation` (no duplicate document type in a case),
+`authenticity_checksum_validation` (always `NOT_IMPLEMENTED` — see below).
+
+### Status semantics
+| Status | Meaning |
+|---|---|
+| `PASS` | The rule's condition holds |
+| `FAIL` | The rule's condition does not hold — a genuine, computable finding |
+| `UNKNOWN` | The rule could apply, but the evidence is too poor (`quality=incomplete_unreadable`) to confidently confirm or deny it — used instead of guessing `FAIL` |
+| `NOT_APPLICABLE` | The rule's precondition isn't met (a dependency field is missing or malformed elsewhere — see `DATE-FORMAT-*`) — extraction failure is never reported as if it were a validation `PASS` or `FAIL` |
+| `NOT_IMPLEMENTED` | The rule is meaningful in principle but this system has no capability to evaluate it (checksum/signature verification on synthetic evidence). A disclosed capability boundary, never a fabricated `PASS` |
+
+### Reference date injection
+Every check that needs "now" (temporal, expiry) defaults to `src/rules.py`'s frozen
+`REFERENCE_DATE` (2026-09-09, for reproducible workshop results) but accepts an
+injected `reference_date` parameter — used by tests to exercise boundary dates without
+touching the frozen default.
+
+### Config-driven policy (stage P3)
+`src/policy.py` loads `mandatory_fields`, `supported_document_types` and
+`min_field_completeness_for_approve` from `config/baseline.json` when present (falling
+back to the historical hard-coded values otherwise), and both `src/rules.py` and
+`src/evidence_validation/` consume these values — closing the gap where
+`config/baseline.json` previously had no effect on running behaviour.

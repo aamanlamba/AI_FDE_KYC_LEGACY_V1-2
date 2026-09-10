@@ -17,10 +17,18 @@ Synthetic application + identity document image
                 v                            classification + quality assessment
        Validation rules                      + schema-validated DocumentEvidence
      date / ID / tamper flag                             |
-                |                                         v
-                |                          attached additively to the API
-                |                          response as `evidence` (not yet
-                |                          consumed by decisioning)
+     (src/rules.py, unchanged                +------------+------------+
+      decision policy)                       v                         v
+                |                 Evidence Validation engine   Identity Resolution
+                |                 (src/evidence_validation/)   (src/identity_resolution/)
+                |                 10 computable-truth rule     cross-document attribute
+                |                 categories, PASS/FAIL/        matching (P2, unchanged
+                |                 UNKNOWN/NOT_APPLICABLE/       in this stage)
+                |                 NOT_IMPLEMENTED per rule
+                |                            |
+                |               attached additively to the API
+                |               response as `validation` (not yet
+                |               consumed by decisioning)
                 v
      APPROVE / REVIEW / REJECT
 ```
@@ -59,4 +67,17 @@ deterministic provider behind the same interface without any change to decisioni
 5. No provider adapter, reviewer queue, persistence layer, trace spans or policy
    versioning. A provider adapter now exists for document evidence extraction
    (`DocumentIntelligenceProvider`); reviewer queue, persistence, tracing and policy
-   versioning remain absent.
+   versioning remain absent. Rule-level versioning now exists for validation rules
+   (`ValidationResult.rule_version`), but there is still no versioning of the overall
+   decision policy in `src/rules.py`.
+6. **As of stage P3**: validation logic that was embedded in `src/rules.py`'s single
+   `evaluate()` function (format checks, expiry handling, mandatory-field completeness)
+   is now decomposed into `src/evidence_validation/` as individually auditable,
+   schema-validated rules (10 categories, each result carrying `rule_id`, `severity`,
+   `reason_code`, `explanation` and `evidence_references`). `src/rules.py` itself is
+   **unchanged in its decision logic** — it still independently computes
+   completeness/expiry/format/tamper and maps them to APPROVE/REVIEW/REJECT exactly as
+   before; the new validation layer runs alongside it, not underneath it, in this stage.
+   `config/baseline.json` is now genuinely authoritative for `mandatory_fields` and
+   `min_field_completeness_for_approve` (via `src/policy.py`), partially closing a gap
+   the P0 baseline assessment flagged.

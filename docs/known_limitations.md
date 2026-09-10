@@ -19,9 +19,21 @@ The following issues are known in the inherited system. They describe the curren
 - Logging is basic and does not provide distributed transaction tracing.
 - No application metrics endpoint or formal SLO monitoring exists.
 - No rate limiting, authentication, authorization or tenant isolation is implemented in the training service.
-- No cryptographic document-signature or checksum verification exists.
+- No cryptographic document-signature or checksum verification exists. As of stage P3,
+  this is now honestly disclosed rather than silently absent: `src/evidence_validation/`
+  reports a `CHECKSUM-SIGNATURE` rule with status `NOT_IMPLEMENTED` (a status distinct
+  from `PASS`/`FAIL`, reserved for capability-boundary disclosure) rather than fabricating
+  a result.
 - Privacy retention and deletion controls are not implemented in application code.
 - Error handling is uneven across parsing and validation paths.
 - Several business decisions are encoded directly in Python conditionals.
 - Changes to document formats can require code changes and regression retesting.
-- `config/baseline.json` records expected baseline settings, but the legacy rule engine still hard-codes several of those values rather than consuming the file as authoritative runtime configuration.
+- `config/baseline.json` records expected baseline settings, but the legacy rule engine
+  still hard-codes several of those values rather than consuming the file as authoritative
+  runtime configuration. As of stage P3, `src/policy.py` loads `mandatory_fields`,
+  `supported_document_types` and `min_field_completeness_for_approve` from this file
+  (falling back to the historical hard-coded values if it is absent), and both
+  `src/rules.py` and `src/evidence_validation/` now consume those config-sourced values.
+  Document-number format regexes (`src/rules.py:PATTERNS`) remain code-level structural
+  constants, not config — they describe the shape of a document format, not a business
+  policy threshold, so externalizing them was judged out of scope for this stage.

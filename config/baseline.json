@@ -6,6 +6,12 @@
   "reject_if_expired": true,
   "reject_if_tamper_marker": true,
   "min_field_completeness_for_approve": 0.75,
+  "mandatory_fields": [
+    "full_name",
+    "date_of_birth",
+    "document_number",
+    "expiry_date"
+  ],
   "supported_document_types": [
     "passport",
     "national_id",

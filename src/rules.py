@@ -1,8 +1,10 @@
 from datetime import date
 import re
 
+from .policy import MANDATORY_FIELDS, MIN_FIELD_COMPLETENESS_FOR_APPROVE
+
 REFERENCE_DATE=date(2026,9,9)  # frozen for reproducible workshop results
-MANDATORY=('full_name','date_of_birth','document_number','expiry_date')
+MANDATORY=MANDATORY_FIELDS  # sourced from config/baseline.json when present (see src/policy.py)
 PATTERNS={
 'passport': re.compile(r'^PXT\d{6}$'),
 'national_id': re.compile(r'^MID-\d{4}-\d{4}$'),
@@ -16,7 +18,7 @@ def evaluate(fields: dict, raw_text: str) -> tuple[str,list[str],list[str]]:
     reasons=[]; warnings=[]
     dtype=fields.get('document_type','').lower()
     c=completeness(fields)
-    if c < 0.75: reasons.append('INSUFFICIENT_MANDATORY_FIELDS')
+    if c < MIN_FIELD_COMPLETENESS_FOR_APPROVE: reasons.append('INSUFFICIENT_MANDATORY_FIELDS')
     num=fields.get('document_number','')
     pat=PATTERNS.get(dtype)
     if pat and num and not pat.match(num): reasons.append('INVALID_DOCUMENT_NUMBER_FORMAT')

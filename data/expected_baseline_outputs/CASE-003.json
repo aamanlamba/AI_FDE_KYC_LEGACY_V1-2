@@ -88,6 +88,194 @@
         ],
         "provider": "deterministic_sidecar_ocr",
         "evidence_reference": "data/sidecar_ocr/CASE-003-DL.txt"
+      },
+      "validation": {
+        "document_id": "CASE-003-DL",
+        "reference_date": "2026-09-09",
+        "results": [
+          {
+            "rule_id": "SCHEMA-001",
+            "rule_version": "1.0.0",
+            "category": "schema_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "SCHEMA_CONFORMS",
+            "explanation": "Evidence field set matches the expected schema for driving_licence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-FULL_NAME",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'full_name' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=full_name"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-DATE_OF_BIRTH",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'date_of_birth' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=date_of_birth"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-DOCUMENT_NUMBER",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'document_number' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=document_number"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-EXPIRY_DATE",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'expiry_date' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "DOCNUM-FORMAT",
+            "rule_version": "1.0.0",
+            "category": "document_number_format_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DOCNUM_FORMAT_VALID",
+            "explanation": "Document number 'MDL-307745' matches the expected format for driving_licence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=document_number"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-DATE_OF_BIRTH",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'date_of_birth' value '1995-02-21' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=date_of_birth"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-ISSUE_DATE",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'issue_date' value '2022-03-15' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-EXPIRY_DATE",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'expiry_date' value '2032-03-14' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "TEMPORAL-ISSUE-NOT-FUTURE",
+            "rule_version": "1.0.0",
+            "category": "temporal_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "ISSUE_DATE_NOT_IN_FUTURE",
+            "explanation": "issue_date 2022-03-15 is not after the reference date 2026-09-09.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "EXPIRY-NOT-PAST",
+            "rule_version": "1.0.0",
+            "category": "expiry_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "NOT_EXPIRED",
+            "explanation": "expiry_date 2032-03-14 is on or after the reference date 2026-09-09.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "ISSUEDATE-BEFORE-EXPIRY",
+            "rule_version": "1.0.0",
+            "category": "issue_date_consistency",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "ISSUE_BEFORE_EXPIRY",
+            "explanation": "issue_date 2022-03-15 precedes expiry_date 2032-03-14.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=issue_date",
+              "data/sidecar_ocr/CASE-003-DL.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "DOB-BEFORE-ISSUE",
+            "rule_version": "1.0.0",
+            "category": "cross_field_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DOB_BEFORE_ISSUE",
+            "explanation": "date_of_birth 1995-02-21 precedes issue_date 2022-03-15.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=date_of_birth",
+              "data/sidecar_ocr/CASE-003-DL.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "DOCTYPE-SUPPORTED",
+            "rule_version": "1.0.0",
+            "category": "document_type_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "DOCUMENT_TYPE_SUPPORTED",
+            "explanation": "Document type 'driving_licence' is a supported type.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt"
+            ]
+          },
+          {
+            "rule_id": "CHECKSUM-SIGNATURE",
+            "rule_version": "1.0.0",
+            "category": "authenticity_checksum_validation",
+            "status": "NOT_IMPLEMENTED",
+            "severity": "INFO",
+            "reason_code": "CHECKSUM_CAPABILITY_NOT_IMPLEMENTED",
+            "explanation": "This system has no cryptographic checksum/signature verification capability over synthetic evidence. This is a disclosed capability boundary, not a passed or failed check.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt"
+            ]
+          }
+        ]
       }
     },
     {
@@ -166,10 +354,198 @@
         "extraction_warnings": [],
         "provider": "deterministic_sidecar_ocr",
         "evidence_reference": "data/sidecar_ocr/CASE-003-PASSPORT.txt"
+      },
+      "validation": {
+        "document_id": "CASE-003-PASSPORT",
+        "reference_date": "2026-09-09",
+        "results": [
+          {
+            "rule_id": "SCHEMA-001",
+            "rule_version": "1.0.0",
+            "category": "schema_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "SCHEMA_CONFORMS",
+            "explanation": "Evidence field set matches the expected schema for passport.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-FULL_NAME",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'full_name' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=full_name"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-DATE_OF_BIRTH",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'date_of_birth' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=date_of_birth"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-DOCUMENT_NUMBER",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'document_number' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=document_number"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-EXPIRY_DATE",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'expiry_date' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "DOCNUM-FORMAT",
+            "rule_version": "1.0.0",
+            "category": "document_number_format_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DOCNUM_FORMAT_VALID",
+            "explanation": "Document number 'PXT300385' matches the expected format for passport.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=document_number"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-DATE_OF_BIRTH",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'date_of_birth' value '1995-02-21' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=date_of_birth"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-ISSUE_DATE",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'issue_date' value '2020-09-20' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-EXPIRY_DATE",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'expiry_date' value '2030-09-19' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "TEMPORAL-ISSUE-NOT-FUTURE",
+            "rule_version": "1.0.0",
+            "category": "temporal_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "ISSUE_DATE_NOT_IN_FUTURE",
+            "explanation": "issue_date 2020-09-20 is not after the reference date 2026-09-09.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "EXPIRY-NOT-PAST",
+            "rule_version": "1.0.0",
+            "category": "expiry_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "NOT_EXPIRED",
+            "explanation": "expiry_date 2030-09-19 is on or after the reference date 2026-09-09.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "ISSUEDATE-BEFORE-EXPIRY",
+            "rule_version": "1.0.0",
+            "category": "issue_date_consistency",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "ISSUE_BEFORE_EXPIRY",
+            "explanation": "issue_date 2020-09-20 precedes expiry_date 2030-09-19.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=issue_date",
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "DOB-BEFORE-ISSUE",
+            "rule_version": "1.0.0",
+            "category": "cross_field_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DOB_BEFORE_ISSUE",
+            "explanation": "date_of_birth 1995-02-21 precedes issue_date 2020-09-20.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=date_of_birth",
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "DOCTYPE-SUPPORTED",
+            "rule_version": "1.0.0",
+            "category": "document_type_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "DOCUMENT_TYPE_SUPPORTED",
+            "explanation": "Document type 'passport' is a supported type.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt"
+            ]
+          },
+          {
+            "rule_id": "CHECKSUM-SIGNATURE",
+            "rule_version": "1.0.0",
+            "category": "authenticity_checksum_validation",
+            "status": "NOT_IMPLEMENTED",
+            "severity": "INFO",
+            "reason_code": "CHECKSUM_CAPABILITY_NOT_IMPLEMENTED",
+            "explanation": "This system has no cryptographic checksum/signature verification capability over synthetic evidence. This is a disclosed capability boundary, not a passed or failed check.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt"
+            ]
+          }
+        ]
       }
     }
   ],
-  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution is now computed and reported (see identity_resolution.overall_status/confidence) but is not yet consulted by the decision policy.",
+  "limitation_notice": "Repo 1.0 case decisions still aggregate document-level decisions only (worst-of); identity_resolution and validation are now computed and reported (see identity_resolution.overall_status/confidence and validation.document_reports/case_level_results) but neither is yet consulted by the decision policy.",
   "identity_resolution": {
     "case_id": "CASE-003",
     "overall_status": "EXACT",
@@ -319,6 +695,403 @@
       "FULL_NAME_CONSISTENT",
       "DATE_OF_BIRTH_CONSISTENT",
       "ADDRESS_CONSISTENT"
+    ]
+  },
+  "validation": {
+    "case_id": "CASE-003",
+    "reference_date": "2026-09-09",
+    "document_reports": [
+      {
+        "document_id": "CASE-003-DL",
+        "reference_date": "2026-09-09",
+        "results": [
+          {
+            "rule_id": "SCHEMA-001",
+            "rule_version": "1.0.0",
+            "category": "schema_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "SCHEMA_CONFORMS",
+            "explanation": "Evidence field set matches the expected schema for driving_licence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-FULL_NAME",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'full_name' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=full_name"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-DATE_OF_BIRTH",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'date_of_birth' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=date_of_birth"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-DOCUMENT_NUMBER",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'document_number' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=document_number"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-EXPIRY_DATE",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'expiry_date' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "DOCNUM-FORMAT",
+            "rule_version": "1.0.0",
+            "category": "document_number_format_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DOCNUM_FORMAT_VALID",
+            "explanation": "Document number 'MDL-307745' matches the expected format for driving_licence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=document_number"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-DATE_OF_BIRTH",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'date_of_birth' value '1995-02-21' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=date_of_birth"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-ISSUE_DATE",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'issue_date' value '2022-03-15' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-EXPIRY_DATE",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'expiry_date' value '2032-03-14' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "TEMPORAL-ISSUE-NOT-FUTURE",
+            "rule_version": "1.0.0",
+            "category": "temporal_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "ISSUE_DATE_NOT_IN_FUTURE",
+            "explanation": "issue_date 2022-03-15 is not after the reference date 2026-09-09.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "EXPIRY-NOT-PAST",
+            "rule_version": "1.0.0",
+            "category": "expiry_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "NOT_EXPIRED",
+            "explanation": "expiry_date 2032-03-14 is on or after the reference date 2026-09-09.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "ISSUEDATE-BEFORE-EXPIRY",
+            "rule_version": "1.0.0",
+            "category": "issue_date_consistency",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "ISSUE_BEFORE_EXPIRY",
+            "explanation": "issue_date 2022-03-15 precedes expiry_date 2032-03-14.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=issue_date",
+              "data/sidecar_ocr/CASE-003-DL.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "DOB-BEFORE-ISSUE",
+            "rule_version": "1.0.0",
+            "category": "cross_field_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DOB_BEFORE_ISSUE",
+            "explanation": "date_of_birth 1995-02-21 precedes issue_date 2022-03-15.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt#field=date_of_birth",
+              "data/sidecar_ocr/CASE-003-DL.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "DOCTYPE-SUPPORTED",
+            "rule_version": "1.0.0",
+            "category": "document_type_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "DOCUMENT_TYPE_SUPPORTED",
+            "explanation": "Document type 'driving_licence' is a supported type.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt"
+            ]
+          },
+          {
+            "rule_id": "CHECKSUM-SIGNATURE",
+            "rule_version": "1.0.0",
+            "category": "authenticity_checksum_validation",
+            "status": "NOT_IMPLEMENTED",
+            "severity": "INFO",
+            "reason_code": "CHECKSUM_CAPABILITY_NOT_IMPLEMENTED",
+            "explanation": "This system has no cryptographic checksum/signature verification capability over synthetic evidence. This is a disclosed capability boundary, not a passed or failed check.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-DL.txt"
+            ]
+          }
+        ]
+      },
+      {
+        "document_id": "CASE-003-PASSPORT",
+        "reference_date": "2026-09-09",
+        "results": [
+          {
+            "rule_id": "SCHEMA-001",
+            "rule_version": "1.0.0",
+            "category": "schema_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "SCHEMA_CONFORMS",
+            "explanation": "Evidence field set matches the expected schema for passport.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-FULL_NAME",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'full_name' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=full_name"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-DATE_OF_BIRTH",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'date_of_birth' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=date_of_birth"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-DOCUMENT_NUMBER",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'document_number' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=document_number"
+            ]
+          },
+          {
+            "rule_id": "MANDATORY-EXPIRY_DATE",
+            "rule_version": "1.0.0",
+            "category": "mandatory_field_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "MANDATORY_FIELD_PRESENT",
+            "explanation": "Mandatory field 'expiry_date' is present in the extracted evidence.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "DOCNUM-FORMAT",
+            "rule_version": "1.0.0",
+            "category": "document_number_format_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DOCNUM_FORMAT_VALID",
+            "explanation": "Document number 'PXT300385' matches the expected format for passport.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=document_number"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-DATE_OF_BIRTH",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'date_of_birth' value '1995-02-21' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=date_of_birth"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-ISSUE_DATE",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'issue_date' value '2020-09-20' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "DATE-FORMAT-EXPIRY_DATE",
+            "rule_version": "1.0.0",
+            "category": "date_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DATE_FORMAT_VALID",
+            "explanation": "'expiry_date' value '2030-09-19' is a valid ISO calendar date.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "TEMPORAL-ISSUE-NOT-FUTURE",
+            "rule_version": "1.0.0",
+            "category": "temporal_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "ISSUE_DATE_NOT_IN_FUTURE",
+            "explanation": "issue_date 2020-09-20 is not after the reference date 2026-09-09.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "EXPIRY-NOT-PAST",
+            "rule_version": "1.0.0",
+            "category": "expiry_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "NOT_EXPIRED",
+            "explanation": "expiry_date 2030-09-19 is on or after the reference date 2026-09-09.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "ISSUEDATE-BEFORE-EXPIRY",
+            "rule_version": "1.0.0",
+            "category": "issue_date_consistency",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "ISSUE_BEFORE_EXPIRY",
+            "explanation": "issue_date 2020-09-20 precedes expiry_date 2030-09-19.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=issue_date",
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=expiry_date"
+            ]
+          },
+          {
+            "rule_id": "DOB-BEFORE-ISSUE",
+            "rule_version": "1.0.0",
+            "category": "cross_field_validation",
+            "status": "PASS",
+            "severity": "MEDIUM",
+            "reason_code": "DOB_BEFORE_ISSUE",
+            "explanation": "date_of_birth 1995-02-21 precedes issue_date 2020-09-20.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=date_of_birth",
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt#field=issue_date"
+            ]
+          },
+          {
+            "rule_id": "DOCTYPE-SUPPORTED",
+            "rule_version": "1.0.0",
+            "category": "document_type_validation",
+            "status": "PASS",
+            "severity": "HIGH",
+            "reason_code": "DOCUMENT_TYPE_SUPPORTED",
+            "explanation": "Document type 'passport' is a supported type.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt"
+            ]
+          },
+          {
+            "rule_id": "CHECKSUM-SIGNATURE",
+            "rule_version": "1.0.0",
+            "category": "authenticity_checksum_validation",
+            "status": "NOT_IMPLEMENTED",
+            "severity": "INFO",
+            "reason_code": "CHECKSUM_CAPABILITY_NOT_IMPLEMENTED",
+            "explanation": "This system has no cryptographic checksum/signature verification capability over synthetic evidence. This is a disclosed capability boundary, not a passed or failed check.",
+            "evidence_references": [
+              "data/sidecar_ocr/CASE-003-PASSPORT.txt"
+            ]
+          }
+        ]
+      }
+    ],
+    "case_level_results": [
+      {
+        "rule_id": "CROSSDOC-NO-DUPLICATE-TYPE",
+        "rule_version": "1.0.0",
+        "category": "cross_document_consistency_validation",
+        "status": "PASS",
+        "severity": "MEDIUM",
+        "reason_code": "NO_DUPLICATE_DOCUMENT_TYPES",
+        "explanation": "No two documents in this case share the same classified document type.",
+        "evidence_references": [
+          "data/sidecar_ocr/CASE-003-DL.txt",
+          "data/sidecar_ocr/CASE-003-PASSPORT.txt"
+        ]
+      }
     ]
   }
 }
