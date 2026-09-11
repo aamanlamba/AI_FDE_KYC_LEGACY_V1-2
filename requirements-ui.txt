@@ -1,0 +1,6 @@
+# Streamlit UI, layered on top of the core runtime dependencies. Kept separate from
+# requirements.txt (not merged into it) for the same reason requirements-dev.txt is
+# separate: the FastAPI service's Docker image has no UI and should not carry this
+# dependency weight; only `streamlit run ui/app.py` needs this file installed.
+-r requirements.txt
+streamlit==1.63.0

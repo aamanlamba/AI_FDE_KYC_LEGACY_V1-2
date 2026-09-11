@@ -93,6 +93,28 @@ identity-resolution, decisioning and operational quality against a curated evalu
 case set, writes a machine-readable report to `var/eval/report.json`, and exits
 non-zero if a release gate fails. See `docs/data_dictionary.md` for the full contract.
 
+## Streamlit UI (optional, local demo)
+A single-process demo console (`ui/app.py`) that calls `src/` directly, in-process —
+no separate API server needed. It reuses the exact same `verify_case()`, review-store,
+and `authorize()` calls the FastAPI service uses, so nothing shown or done through it
+is UI-only logic: a review opened or transitioned here is indistinguishable, in the
+durable `var/review_store.sqlite3` file, from one done through the API.
+
+```bash
+pip install -r requirements-ui.txt   # layers streamlit on top of requirements.txt
+streamlit run ui/app.py
+```
+
+Pick a synthetic case in the sidebar, run verification, and inspect the full
+evidence/identity/risk/decision-lineage breakdown across tabs; if the case reaches
+REVIEW, the "Review workflow" tab lets you open a review and apply a transition with a
+reviewer credential (the same `REVIEWER_API_KEYS`/`config/security.json` credential the
+API checks — entering a wrong or missing one is rejected the same way, not decorated
+around). This is a local, single-process convenience tool, not a second deployable
+service — see `tests/test_ui_app.py` for the smoke tests covering it (skipped
+automatically if `streamlit` isn't installed, so it never affects the core suite,
+`requirements.txt`, or CI).
+
 ## Observability (stage P9)
 Structured JSON logs, a nested trace span per pipeline stage, and `GET /metrics`
 (Prometheus-text-compatible) are built in — see `docs/operations/runbook.md` for exact
